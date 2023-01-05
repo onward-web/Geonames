@@ -98,6 +98,9 @@ class GeonamesController {
     public function regionByCountry( Request $request): string
     {
         $rows = [];
+        echo '<pre>';
+        print_r($request->all());
+        echo '</pre>';
         return response()->json( $rows );
     }
 
@@ -111,6 +114,9 @@ class GeonamesController {
     public function cityByRegionAndCountry( Request $request): string
     {
         $rows = [];
+        echo '<pre>';
+        print_r($request->all());
+        echo '</pre>';
         return response()->json( $rows );
     }
 
