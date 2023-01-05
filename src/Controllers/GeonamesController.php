@@ -89,6 +89,31 @@ class GeonamesController {
         return response()->json( $rows );
     }
 
+    /**
+     * @param Request $request
+     * @param string $countryCode
+     * @param string $term
+     * @return string
+     */
+    public function regionByCountry( Request $request): string
+    {
+        $rows = [];
+        return response()->json( $rows );
+    }
+
+
+    /**
+     * @param Request $request
+     * @param string $countryCode
+     * @param string $term
+     * @return string
+     */
+    public function cityByRegionAndCountry( Request $request): string
+    {
+        $rows = [];
+        return response()->json( $rows );
+    }
+
 
     /**
      * @param string $countryCode
