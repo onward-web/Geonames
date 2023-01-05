@@ -38,9 +38,7 @@ class Status extends Command {
         $settings = GeoSetting::on( $this->connectionName )
                               ->first();
 
-        echo '<pre>';
-        print_r($settings);
-        echo '</pre>';
+
 
         $rows = [];
 
@@ -56,9 +54,9 @@ class Status extends Command {
                     'Updated'];
 
         $rows[] = [$settings->status,
-                   @implode( ", ", $settings->countries ),
-                   @implode( ", ", $settings->countries_to_be_added ),
-                   @implode( ", ", $settings->languages ),
+                   is_array($settings->countries) ? @implode( ", ", $settings->countries ) : $settings->countries,
+                   is_array($settings->countries_to_be_added) ? @implode( ", ", $settings->countries_to_be_added ) : '',
+                   is_array($settings->languages) ? @implode( ", ", $settings->languages ) : $settings->languages,
                    $settings->storage_subdir,
                    isset( $settings->installed_at ) ? $settings->installed_at->diffForHumans() : '',
                    isset( $settings->last_modified_at ) ? $settings->last_modified_at->diffForHumans() : '',
