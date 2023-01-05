@@ -38,6 +38,10 @@ class Status extends Command {
         $settings = GeoSetting::on( $this->connectionName )
                               ->first();
 
+        echo '<pre>';
+        print_r($settings);
+        echo '</pre>';
+
         $rows = [];
 
 
