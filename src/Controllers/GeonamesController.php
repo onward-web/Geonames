@@ -97,16 +97,14 @@ class GeonamesController extends GeneralController
      * @param Request $request
      * @return string
      */
-    public function regionByCountry( Request $request): string
+    public function regionByCountry(Request $request)
     {
-        echo 1111;
-        /*
+
         $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
             ->with(['alternateName'])
             ->filter($request->all())
             ->paginateFilter();
-        */
-        return '';//response()->json('', 200, []);
+        return response()->json($obj);
     }
 
 
