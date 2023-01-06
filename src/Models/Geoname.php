@@ -2,14 +2,20 @@
 
 namespace MichaelDrennen\Geonames\Models;
 
+
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use MichaelDrennen\Geonames\Events\GeonameUpdated;
 use MichaelDrennen\Geonames\Repositories\Admin1CodeRepository;
 use MichaelDrennen\Geonames\Repositories\Admin2CodeRepository;
+use EloquentFilter\Filterable;
+use MichaelDrennen\Geonames\Models\AlternateName;
 
 class Geoname extends Model {
+
+    use Filterable;
+
     protected $table = 'geonames';
 
     protected $primaryKey = 'geonameid';
@@ -26,6 +32,13 @@ class Geoname extends Model {
      */
     protected $appends = ['admin_1_name',
                           'admin_2_name'];
+
+
+    public function modelFilter()
+    {
+        return $this->provideFilter(\App\ModelFilters\GeonameFilter::class);
+    }
+
 
     /**
      * @var string
@@ -117,6 +130,18 @@ class Geoname extends Model {
         }
 
         return false;
+    }
+
+
+    public function descriptions(){
+        return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid');
+    }
+
+    public function description($lang = null){
+        if($lang == null){
+            $lang = sc_tecdoc_lang();
+        }
+        return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('lang', $lang);
     }
 
 }

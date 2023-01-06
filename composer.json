@@ -9,6 +9,12 @@
       "email": "michaeldrennen74@gmail.com"
     }
   ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url":  "https://github.com/onward-web/composite-key.git"
+    }
+  ],
   "require": {
     "php": "^7.0|^8.0",
     "ext-intl": "*",
@@ -20,6 +26,8 @@
     "curl/curl": "^2.2",
     "fabpot/goutte": "^4.0",
     "nesbot/carbon": "^2.28",
+    "tucker-eric/eloquentfilter": "^3.1",
+    "jeidison/composite-key": "dev-onward",
     "illuminate/support": "^6.0 || ^7.16 || ^8.0 || ^9.0",
     "illuminate/routing": "^6.0 || ^7.16 || ^8.0 || ^9.0",
     "illuminate/database": "^6.0 || ^7.16 || ^8.0 || ^9.0"

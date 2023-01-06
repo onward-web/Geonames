@@ -4,6 +4,7 @@ namespace MichaelDrennen\Geonames\Controllers;
 
 use Illuminate\Http\Request;
 use Locale;
+use MichaelDrennen\Geonames\Models\Geoname;
 use MichaelDrennen\Geonames\Repositories\GeonameRepository;
 
 class GeonamesController {
@@ -98,6 +99,12 @@ class GeonamesController {
     public function regionByCountry( Request $request): string
     {
         $rows = [];
+
+        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )->with(['setting'])->filter($request->all())->paginateFilter();
+
+
+
+
         echo '<pre>';
         print_r($request->all());
         echo '</pre>';
@@ -131,6 +138,9 @@ class GeonamesController {
 
         return response()->json( $results );
     }
+
+
+
 
 
 }
