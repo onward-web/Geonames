@@ -12,7 +12,7 @@ class CreateGeonamesTable extends Migration {
      */
     public function up() {
         Schema::create('geonames', function (Blueprint $table) {
-            $table->engine = 'MyISAM';
+            $table->engine = 'InnoDB';
 
             $table->unsignedInteger( 'geonameid' );               // geonameid         : integer id of record in geonames database
             $table->string('name', 200)->nullable();                // name              : name of geographical point (utf8) varchar(200)

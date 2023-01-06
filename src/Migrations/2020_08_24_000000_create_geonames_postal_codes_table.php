@@ -18,7 +18,7 @@ class CreateGeonamesPostalCodesTable extends Migration {
      */
     public function up() {
         Schema::create( self::TABLE, function ( Blueprint $table ) {
-            $table->engine = 'MyISAM';
+            $table->engine = 'InnoDB';
             $table->increments('id');
             $table->char( 'country_code', 2 );
             $table->string( 'postal_code', 20 );

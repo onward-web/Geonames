@@ -2,13 +2,15 @@
 
 namespace MichaelDrennen\Geonames\Models;
 
+use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
 class AlternateName extends Model {
 
+    use Filterable;
+
     protected $table      = 'geonames_alternate_names';
     protected $primaryKey = 'alternateNameId';
-
 
     /**
      * The attributes that should be cast to native types.
@@ -41,6 +43,11 @@ class AlternateName extends Model {
         'isColloquial',
         'isHistoric',
     ];
+
+    public function modelFilter()
+    {
+        return $this->provideFilter(\MichaelDrennen\Geonames\ModelFilters\AlternateNameFilter::class);
+    }
 
 
     public function geoname() {

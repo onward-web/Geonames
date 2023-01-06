@@ -7,14 +7,15 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use MichaelDrennen\Geonames\Events\GeonameUpdated;
-use MichaelDrennen\Geonames\Repositories\Admin1CodeRepository;
-use MichaelDrennen\Geonames\Repositories\Admin2CodeRepository;
-use EloquentFilter\Filterable;
 use MichaelDrennen\Geonames\Models\AlternateName;
+use EloquentFilter\Filterable;
+use Jeidison\CompositeKey\CompositeKey;
+
 
 class Geoname extends Model {
 
     use Filterable;
+    use CompositeKey;
 
     protected $table = 'geonames';
 
@@ -26,13 +27,15 @@ class Geoname extends Model {
      */
     protected $guarded = [];
 
+
     /**
      * The accessors to append to the model's array form.
      * @var array
      */
+    /*
     protected $appends = ['admin_1_name',
                           'admin_2_name'];
-
+    */
 
     public function modelFilter()
     {
@@ -77,48 +80,6 @@ class Geoname extends Model {
     protected $countryCodesThatUseAdmin2Codes = ['US'];
 
 
-    /**
-     * Given a country_code and admin1_code from the geonames table, it returns the asciiname for this admin 1 record.
-     * @return string
-     */
-    public function getAdmin1NameAttribute () {
-        try {
-            $admin1CodeRepository = new Admin1CodeRepository();
-            $admin1Code = $admin1CodeRepository->getByCompositeKey( $this->country_code, $this->admin1_code );
-
-            return (string)$admin1Code->asciiname;
-        } catch ( ModelNotFoundException $e ) {
-            return '';
-        }
-    }
-
-    /**
-     * This is not an ideal solution, but it's the best we can do with Eloquent. Eloquent does not allow for composite
-     * keys to be used in model relations. There is no primary key that connects a geonames record to a
-     * geonames_admin_2_codes record. However, you can uniquely identify an geonames_admin_2_codes record if you use
-     * the country_code, admin1_code, and admin2_code. All of those values are present in a geonames record. So my
-     * solution is to set up a dynamic attribute in the Geoname model. When you ask for $geoname->admin_2_name, the
-     * following code will be executed.
-     * Additionally, very few countries use the admin2_code in a meaningful way. I have set an array of countries that
-     * do use admin2_codes in this model. A check is done, and if the country of this geoname record doesn't use
-     * admin2_codes, a blank string is returned for the admin_2_name.
-     * @return string   If no matching geonames_admin_2_records row can be found, an empty string is returned.
-     */
-    public function getAdmin2NameAttribute () {
-        if ( !$this->thisCountryUsesAdmin2Codes( $this->country_code ) ) {
-            return '';
-        }
-
-        try {
-            $admin2CodeRepository = new Admin2CodeRepository();
-            $admin2Code = $admin2CodeRepository->getByCompositeKey( $this->country_code, $this->admin1_code, $this->admin2_code );
-
-            return (string)$admin2Code->asciiname;
-        } catch ( ModelNotFoundException $e ) {
-            return '';
-        }
-    }
-
 
     /**
      * @param string $countryCode
@@ -132,16 +93,26 @@ class Geoname extends Model {
         return false;
     }
 
+    public function admin1Code()
+    {
+        return $this->hasMany(Admin1Code::class, ['country_code', 'admin1_code'], ['country_code', 'admin1_code']);
+    }
 
-    public function descriptions(){
+    public function admin2Code()
+    {
+        return $this->hasMany(Admin2Code::class, ['country_code', 'admin1_code', 'admin2_code'], ['country_code', 'admin1_code', 'admin2_code']);
+    }
+
+
+    public function alternateNames(){
         return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid');
     }
 
-    public function description($lang = null){
+    public function alternateName($lang = null){
         if($lang == null){
             $lang = sc_tecdoc_lang();
         }
-        return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('lang', $lang);
+        return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('isolanguage', $lang);
     }
 
 }

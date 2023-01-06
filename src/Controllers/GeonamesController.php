@@ -2,12 +2,15 @@
 
 namespace MichaelDrennen\Geonames\Controllers;
 
+use App\Http\Controllers\GeneralController;
 use Illuminate\Http\Request;
 use Locale;
 use MichaelDrennen\Geonames\Models\Geoname;
 use MichaelDrennen\Geonames\Repositories\GeonameRepository;
 
-class GeonamesController {
+class GeonamesController extends GeneralController
+{
+
 
     protected $geoname;
 
@@ -92,23 +95,18 @@ class GeonamesController {
 
     /**
      * @param Request $request
-     * @param string $countryCode
-     * @param string $term
      * @return string
      */
     public function regionByCountry( Request $request): string
     {
-        $rows = [];
-
-        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )->with(['setting'])->filter($request->all())->paginateFilter();
-
-
-
-
-        echo '<pre>';
-        print_r($request->all());
-        echo '</pre>';
-        return response()->json( $rows );
+        echo 1111;
+        /*
+        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
+            ->with(['alternateName'])
+            ->filter($request->all())
+            ->paginateFilter();
+        */
+        return '';//response()->json('', 200, []);
     }
 
 
@@ -121,9 +119,7 @@ class GeonamesController {
     public function cityByRegionAndCountry( Request $request): string
     {
         $rows = [];
-        echo '<pre>';
-        print_r($request->all());
-        echo '</pre>';
+
         return response()->json( $rows );
     }
 

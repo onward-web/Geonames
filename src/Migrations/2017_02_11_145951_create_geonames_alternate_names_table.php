@@ -15,7 +15,7 @@ class CreateGeonamesAlternateNamesTable extends Migration {
      */
     public function up() {
         Schema::create( self::TABLE, function ( Blueprint $table ) {
-            $table->engine = 'MyISAM';
+            $table->engine = 'InnoDB';
 
             /**
              * alternateNameId   : the id of this alternate name, int
@@ -67,8 +67,8 @@ class CreateGeonamesAlternateNamesTable extends Migration {
             $table->timestamps();
             $table->primary( 'alternateNameId' );
             $table->index( 'geonameid' );
-
-
+            $table->index( 'isolanguage' );
+            $table->fullText('alternate_name');
             /**
              * I have to use the following code in place to add an index for MySQL databases.
              * $table->index( 'alternate_name' );

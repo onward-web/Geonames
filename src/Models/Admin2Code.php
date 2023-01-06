@@ -3,8 +3,10 @@
 namespace MichaelDrennen\Geonames\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Jeidison\CompositeKey\CompositeKey;
 
 class Admin2Code extends Model {
+    use CompositeKey;
 
     protected $primaryKey = 'geonameid';
     protected $table      = 'geonames_admin_2_codes';

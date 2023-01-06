@@ -17,7 +17,7 @@ class CreateGeonamesSettingsTable extends Migration {
      */
     public function up() {
         Schema::create( self::TABLE_NAME, function ( Blueprint $table ) {
-            $table->engine = 'MyISAM';
+            $table->engine = 'InnoDB';
             // We should only ever have one record in this table.
             $table->increments( GeoSetting::DB_COLUMN_ID );
 

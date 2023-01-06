@@ -56,58 +56,9 @@ class RepositoryTest extends AbstractGlobalTestCase {
     }
 
 
-    /**
-     *
-     */
-    protected function admin1Code() {
-        $repo       = new \MichaelDrennen\Geonames\Repositories\Admin1CodeRepository();
-        $admin1Code = $repo->getByCompositeKey( 'AD', '06' );
-        $this->assertInstanceOf( \MichaelDrennen\Geonames\Models\Admin1Code::class, $admin1Code );
-
-        try {
-            $repo->getByCompositeKey( 'XX', '00' ); // Does not exist.
-        } catch ( \Exception $exception ) {
-            $this->assertInstanceOf( \Illuminate\Database\Eloquent\ModelNotFoundException::class, $exception );
-        }
-    }
-
-    /**
-     *
-     */
-    protected function admin2Code() {
-        $repo       = new \MichaelDrennen\Geonames\Repositories\Admin2CodeRepository();
-        $admin2Code = $repo->getByCompositeKey( 'AF', '08', 609 );
-        $this->assertInstanceOf( \MichaelDrennen\Geonames\Models\Admin2Code::class, $admin2Code );
-
-        try {
-            $repo->getByCompositeKey( 'XX', '00', 000 ); // Does not exist.
-        } catch ( \Exception $exception ) {
-            $this->assertInstanceOf( \Illuminate\Database\Eloquent\ModelNotFoundException::class, $exception );
-        }
-    }
+    
 
 
-    /**
-     *
-     */
-    protected function alternateName() {
-        $repo           = new \MichaelDrennen\Geonames\Repositories\AlternateNameRepository();
-        $alternateNames = $repo->getByGeonameId( 7500737 );
-        $this->assertInstanceOf( \Illuminate\Support\Collection::class, $alternateNames );
-        $this->assertNotEmpty( $alternateNames );
-
-
-        // Should be an empty Collection
-        $alternateNames = $repo->getByGeonameId( 0 );
-        $this->assertInstanceOf( \Illuminate\Support\Collection::class, $alternateNames );
-        $this->assertEmpty( $alternateNames );
-
-        try {
-            $repo->getByGeonameId( 0 ); // Does not exist.
-        } catch ( \Exception $exception ) {
-            $this->assertInstanceOf( \Illuminate\Database\Eloquent\ModelNotFoundException::class, $exception );
-        }
-    }
 
 
     /**

@@ -12,7 +12,7 @@ class CreateGeonamesDeletesTable extends Migration {
      */
     public function up() {
         Schema::create( 'geonames_deletes', function ( Blueprint $table ) {
-            $table->engine = 'MyISAM';
+            $table->engine = 'InnoDB';
             $table->increments( 'id' );       // Primary key of this table. Possible that we could use geonameid. Can a record be added after it's deleted?
             $table->date( \MichaelDrennen\Geonames\Models\GeonamesDelete::date );           // The date that this record was removed from the geonames database.
             $table->integer( \MichaelDrennen\Geonames\Models\GeonamesDelete::geonameid );   // geonameid         : integer id of record in geonames database
