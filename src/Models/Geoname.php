@@ -36,7 +36,7 @@ class Geoname extends Model {
 
     public function modelFilter()
     {
-        return $this->provideFilter(\App\ModelFilters\GeonameFilter::class);
+        return $this->provideFilter(\MichaelDrennen\Geonames\ModelFilters\GeonameFilter::class);
     }
 
 
