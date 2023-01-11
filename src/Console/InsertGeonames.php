@@ -464,7 +464,7 @@ SET created_at=NOW(),updated_at=null";
         Schema::connection( $this->connectionName )->rename( self::TABLE_WORKING, self::TABLE );
         GeoSetting::setCountriesFromCountriesToBeAdded( $this->connectionName );
 
-        MichaelDrennen\Geonames\Jobs\UpdateGeonameByTranslateText::dispatch();
+        \MichaelDrennen\Geonames\Jobs\UpdateGeonameByTranslateText::dispatch();
     }
 
 
