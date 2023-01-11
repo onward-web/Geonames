@@ -20,7 +20,7 @@ class UpdateGeonameByTranslateText //implements ShouldQueue
 
                 Geoname::where('alternate_name', $translateText->source_text)
                     ->where('isolanguage', $translateText->source_lang)
-                    ->update(['alternate_name', $translateText->target_text]);
+                    ->update(['alternate_name' => $translateText->target_text]);
             }
 
         });
