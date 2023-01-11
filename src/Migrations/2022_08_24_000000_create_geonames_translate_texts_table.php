@@ -6,7 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateGeonamesPostalCodesTable extends Migration {
 
-    const TABLE = 'geonames_translate_texts';
+    const TABLE = 'geonames_postal_codes';
 
     /**
      * Run the migrations.
@@ -20,16 +20,22 @@ class CreateGeonamesPostalCodesTable extends Migration {
         Schema::create( self::TABLE, function ( Blueprint $table ) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string( 'source_text', 700 );
-            $table->string( 'source_lang', 3 );
-            $table->string( 'target_text', 700 );
-            $table->string( 'target_lang', 3 );
-
+            $table->char( 'country_code', 2 );
+            $table->string( 'postal_code', 20 );
+            $table->string( 'place_name', 180 );
+            $table->string( 'admin1_name', 100 );
+            $table->string( 'admin1_code', 20 );
+            $table->string( 'admin2_name', 100 );
+            $table->string( 'admin2_code', 20 );
+            $table->string( 'admin3_name', 100 );
+            $table->string( 'admin3_code', 20 );
+            $table->decimal('latitude', 10, 8);
+            $table->decimal('longitude', 11, 8);
+            $table->tinyInteger( 'accuracy' );
             $table->timestamps();
 
-            $table->index( 'source_text' );
-            $table->index( 'source_lang' );
-            $table->unique( [ 'source_text', 'source_lang', 'target_lang' ] );
+            $table->index( 'postal_code' );
+            $table->index( [ 'country_code', 'postal_code' ] );
         } );
     }
 

@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Schema;
 use MichaelDrennen\Geonames\Models\GeoSetting;
 use MichaelDrennen\Geonames\Models\Log;
 use MichaelDrennen\LocalFile\LocalFile;
+use MichaelDrennen\Geonames\Models\GeonameTranslateText;
+
+
 
 
 class InsertGeonames extends AbstractCommand {
@@ -429,6 +432,14 @@ SET created_at=NOW(),updated_at=null";
         }
         fclose( $file );
 
+        GeonameTranslateText::chunkById(100, function ($translateTexts) {
+            foreach($translateTexts as $translateText){
+                \MichaelDrennen\Geonames\Models\GeonameWorking::where('alternate_name', $translateText->source_text)
+                    ->where('isolanguage', $translateText->source_lang)
+                    ->update(['alternate_name', $translateText->target_text]);
+            }
+        });
+
 
         try {
             $chunkedRows = array_chunk( $rows, self::ROWS_TO_INSERT_AT_ONCE );
@@ -452,6 +463,8 @@ SET created_at=NOW(),updated_at=null";
         Schema::connection( $this->connectionName )->dropIfExists( self::TABLE );
         Schema::connection( $this->connectionName )->rename( self::TABLE_WORKING, self::TABLE );
         GeoSetting::setCountriesFromCountriesToBeAdded( $this->connectionName );
+
+        MichaelDrennen\Geonames\Jobs\UpdateGeonameByTranslateText::dispatch();
     }
 
 

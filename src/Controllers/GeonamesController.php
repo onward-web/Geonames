@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Locale;
 use MichaelDrennen\Geonames\Models\Geoname;
 use MichaelDrennen\Geonames\Repositories\GeonameRepository;
+use DB;
 
 class GeonamesController extends GeneralController
 {
@@ -99,10 +100,18 @@ class GeonamesController extends GeneralController
      */
     public function regionByCountry(Request $request)
     {
+        $lang = $request->input('lang', sc_tecdoc_lang());
 
         $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
+            ->select(DB::raw('geonames.*'))
             ->with(['alternateName'])
+            ->join('geonames_alternate_names', function($join) use($lang)
+            {
+                $join->on('geonames.geonameid', '=', 'geonames_alternate_names.geonameid');
+                $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
+            })
             ->filter($request->all())
+            ->orderBy('geonames_alternate_names.alternate_name', 'asc')
             ->paginateFilter();
         return response()->json($obj);
     }
