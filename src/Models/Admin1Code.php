@@ -18,4 +18,9 @@ class Admin1Code extends Model {
      * @var array
      */
     protected $casts = ['geonameid' => 'integer'];
+
+    public function geoname()
+    {
+        return $this->belongsTo(Geoname::class, ['geonameid', 'country_code', 'admin1_code'], ['geonameid', 'country_code', 'admin1_code']);
+    }
 }

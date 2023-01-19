@@ -111,6 +111,7 @@ class GeonamesController extends GeneralController
                 $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
             })
             ->filter($request->all())
+            ->distinct()
             ->orderBy('geonames_alternate_names.alternate_name', 'asc')
             ->paginateFilter();
         return response()->json($obj);
@@ -123,11 +124,23 @@ class GeonamesController extends GeneralController
      * @param string $term
      * @return string
      */
-    public function cityByRegionAndCountry( Request $request): string
+    public function search( Request $request)
     {
-        $rows = [];
+        $lang = $request->input('lang', sc_tecdoc_lang());
 
-        return response()->json( $rows );
+        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
+            ->select(DB::raw('geonames.*'))
+            ->with(['alternateName'])
+            ->join('geonames_alternate_names', function($join) use($lang)
+            {
+                $join->on('geonames.geonameid', '=', 'geonames_alternate_names.geonameid');
+                $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
+            })
+            ->filter($request->all())
+            ->distinct()
+            ->orderBy('geonames_alternate_names.alternate_name', 'asc')
+            ->paginateFilter();
+        return response()->json($obj);
     }
 
 
