@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use MichaelDrennen\Geonames\Models\AlternateName;
 use MichaelDrennen\Geonames\Models\GeonameTranslateText;
 
-class UpdateGeonameByTranslateText //implements ShouldQueue
+class UpdateGeonameByTranslateText implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

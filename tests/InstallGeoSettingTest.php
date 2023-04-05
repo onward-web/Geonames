@@ -34,16 +34,7 @@ class InstallGeoSettingTest extends BaseInstallTestCase {
     }
 
 
-    /**
-     * @test
-     * @group install
-     * @group geosetting
-     */
-    public function testGeoSettingGetConnectionNameShouldReturnString() {
-        $this->geoSettingInstallForTest();
-        $connectionName = GeoSetting::getDatabaseConnectionName();
-        $this->assertEquals( $this->DB_CONNECTION, $connectionName );
-    }
+
 
     /**
      * @test

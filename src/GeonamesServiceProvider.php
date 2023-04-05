@@ -56,6 +56,9 @@ class GeonamesServiceProvider extends \Illuminate\Support\ServiceProvider {
      * @return void
      */
     public function register() {
-
+        // Register the config publish path
+        $configPath = __DIR__ . '/config/geonames.php';
+        $this->mergeConfigFrom($configPath, 'geonames');
+        $this->publishes([$configPath => config_path('geonames.php')], 'config');
     }
 }
