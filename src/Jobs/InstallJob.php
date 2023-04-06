@@ -54,7 +54,7 @@ class InstallJob //implements ShouldQueue
 
         $this->line( "Starting " . self::class);
 
-        /*
+
         $featureCodeJobInstance = new FeatureCodeJob($this->languages);
         dispatch_sync($featureCodeJobInstance);
 
@@ -88,13 +88,12 @@ class InstallJob //implements ShouldQueue
 
         $postalCodeJobInstance = new PostalCodeJob($this->countries, $this->languages, $this->storageSubDir);
         dispatch_sync($postalCodeJobInstance);
-        */
+
 
         $postalCodeJobInstance = new NoCountryJob($this->countries, $this->languages, $this->storageSubDir);
         dispatch_sync($postalCodeJobInstance);
 
 
-     
 
     }
 }
