@@ -89,10 +89,10 @@ class InstallJob //implements ShouldQueue
         $postalCodeJobInstance = new PostalCodeJob($this->countries, $this->languages, $this->storageSubDir);
         dispatch_sync($postalCodeJobInstance);
 
-
+        /*
         $postalCodeJobInstance = new NoCountryJob($this->countries, $this->languages, $this->storageSubDir);
         dispatch_sync($postalCodeJobInstance);
-
+        */
 
 
     }

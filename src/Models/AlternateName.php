@@ -57,7 +57,7 @@ class AlternateName extends Model {
         return $this->belongsTo(Geoname::class, 'geonameid', 'geonameid');
     }
 
-    public function getAlternateNameAfterCcheckAfterCheckAttribute()
+    public function getAlternateNameAfterCheckAttribute()
     {
         if($this->alternate_name_edited && !empty($this->alternate_name_edited)){
             return $this->alternate_name_edited;
