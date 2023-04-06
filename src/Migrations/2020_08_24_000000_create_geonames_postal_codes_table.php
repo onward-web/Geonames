@@ -30,6 +30,7 @@ class CreateGeonamesPostalCodesTable extends Migration {
             $table->index( 'source_text' );
             $table->index( 'source_lang' );
             $table->unique( [ 'source_text', 'source_lang', 'target_lang' ] );
+            $table->index('updated_at');
         } );
     }
 

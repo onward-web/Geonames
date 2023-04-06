@@ -18,6 +18,7 @@ class Log extends Model
      * @var string
      */
     protected $table = 'geonames_logs';
+    protected $connection = GEONAMES_CONNECTION;
 
     const ERROR = 'error';
     const MODIFICATION = 'modification';

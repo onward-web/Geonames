@@ -29,6 +29,7 @@ class CreateGeonamesAdmin1CodesTable extends Migration {
 
             $table->index( 'country_code' );
             $table->index( 'admin1_code' );
+            $table->index('updated_at');
 
 
             /**

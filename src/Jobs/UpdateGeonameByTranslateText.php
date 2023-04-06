@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use MichaelDrennen\Geonames\Models\AlternateName;
 use MichaelDrennen\Geonames\Models\GeonameTranslateText;
 
-class UpdateGeonameByTranslateText implements ShouldQueue
+class UpdateGeonameByTranslateText
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -19,7 +19,7 @@ class UpdateGeonameByTranslateText implements ShouldQueue
 
                 AlternateName::where('alternate_name', $translateText->source_text)
                     ->where('isolanguage', $translateText->source_lang)
-                    ->update(['alternate_name' => $translateText->target_text]);
+                    ->update(['alternate_name_edited' => $translateText->target_text]);
             }
 
         });

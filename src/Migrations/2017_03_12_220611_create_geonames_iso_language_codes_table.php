@@ -22,6 +22,7 @@ class CreateGeonamesIsoLanguageCodesTable extends Migration {
             $table->string( 'language_name', 255 );
             $table->timestamps();
             $table->primary( 'iso_639_3' );
+            $table->index('updated_at');
         } );
     }
 

@@ -24,6 +24,8 @@ class CreateGeonamesFeatureCodesTable extends Migration {
                            'feature_code']);
             $table->index(['language_code',
                            'feature_class']);
+            $table->unique(['language_code', 'feature_class', 'feature_code'], 'language_code_feature_class_feature_code');
+            $table->index('updated_at');
         });
     }
 

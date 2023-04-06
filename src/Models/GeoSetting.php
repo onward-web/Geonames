@@ -16,6 +16,7 @@ class GeoSetting extends Model
 {
 
     protected $table = 'geonames_settings';
+    protected $connection = GEONAMES_CONNECTION;
 
     /**
      * @var array
@@ -116,11 +117,6 @@ class GeoSetting extends Model
     const DB_COLUMN_CONNECTION = 'connection';
 
     /**
-     * The root url of all of the download files.
-     */
-    const URL = 'http://download.geonames.org/export/dump/';
-
-    /**
      * Create our GeoSetting record in the database. This is where we pull all of our
      * configuration data from to process the install and later queries.
      *
@@ -211,7 +207,7 @@ class GeoSetting extends Model
         Log::error('',
             "Unable to create the settings record in the init() function.",
             'local');
-        throw new Exception("Unable to create the settings record in the init() function. In reality, you should never get to this Exception. A database exception would most likely be thrown further up in this function.");
+        throw new \Exception("Unable to create the settings record in the init() function. In reality, you should never get to this Exception. A database exception would most likely be thrown further up in this function.");
     }
 
     /**
@@ -240,7 +236,7 @@ class GeoSetting extends Model
             return TRUE;
         }
 
-        throw new Exception("Unable to add this language to our settings " . $languageCode);
+        throw new \Exception("Unable to add this language to our settings " . $languageCode);
     }
 
     /**
@@ -269,7 +265,7 @@ class GeoSetting extends Model
             return TRUE;
         }
 
-        throw new Exception("Unable to remove this language to our settings " . $languageCode);
+        throw new \Exception("Unable to remove this language to our settings " . $languageCode);
     }
 
     /**
@@ -312,7 +308,7 @@ class GeoSetting extends Model
             ->update([self::DB_COLUMN_STORAGE_SUBDIR => $storageSubdir]);
 
         if ($updateResult === FALSE) {
-            throw new Exception("Unable to update the storage dir column to: " . $storageSubdir);
+            throw new \Exception("Unable to update the storage dir column to: " . $storageSubdir);
         }
 
         try {
@@ -339,14 +335,14 @@ class GeoSetting extends Model
         }
 
         if (file_exists($path) && !is_writable($path)) {
-            throw new Exception("The storage path at '" . $path . "' exists but we can't write to it.");
+            throw new \Exception("The storage path at '" . $path . "' exists but we can't write to it.");
         }
 
         if (mkdir($path, 0700, TRUE)) {
             return $path;
         }
 
-        throw new Exception("We were unable to create the storage path at '" . $path . "' so check to make sure you have the proper permissions.");
+        throw new \Exception("We were unable to create the storage path at '" . $path . "' so check to make sure you have the proper permissions.");
     }
 
     /**
@@ -361,7 +357,7 @@ class GeoSetting extends Model
 
         $settingRecord = self::first();
         if (is_null($settingRecord)) {
-            throw new Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
+            throw new \Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
         }
 
         $columnName = self::DB_COLUMN_STORAGE_SUBDIR;
@@ -411,18 +407,6 @@ class GeoSetting extends Model
         return $absolutePaths;
     }
 
-    /**
-     * Given a file name, this function returns the remote url to that file on the geonames.org website.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    public static function getDownloadUrlForFile(string $path): string
-    {
-        return self::URL . $path;
-    }
-
 
     /**
      * @return array
@@ -432,7 +416,7 @@ class GeoSetting extends Model
     {
         $settingRecord = self::first();
         if (is_null($settingRecord)) {
-            throw new Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
+            throw new \Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
         }
         $columnName = self::DB_COLUMN_COUNTRIES_TO_BE_ADDED;
 
@@ -450,7 +434,7 @@ class GeoSetting extends Model
     {
         $settingRecord = self::first();
         if (is_null($settingRecord)) {
-            throw new Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
+            throw new \Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
         }
 
         $settingRecord->{self::DB_COLUMN_COUNTRIES} = $settingRecord->{self::DB_COLUMN_COUNTRIES_TO_BE_ADDED};
@@ -472,7 +456,7 @@ class GeoSetting extends Model
     {
         $settingRecord = self::first();
         if (is_null($settingRecord)) {
-            throw new Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
+            throw new \Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
         }
 
         $settingRecord->{self::DB_COLUMN_INSTALLED_AT} = Carbon::now();
@@ -490,7 +474,7 @@ class GeoSetting extends Model
     {
         $settingRecord = self::first();
         if (is_null($settingRecord)) {
-            throw new Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
+            throw new \Exception("The setting record does not exist in the database yet. You need to run geonames:install first.");
         }
 
         $settingRecord->{self::DB_COLUMN_LAST_MODIFIED_AT} = Carbon::now();
@@ -509,7 +493,7 @@ class GeoSetting extends Model
         $allFiles = File::files(self::getAbsoluteLocalStoragePath());
         $numFiles = count($allFiles);
         if ($numFiles != 0) {
-            throw new Exception("We were unable to delete all of the files in " . self::getAbsoluteLocalStoragePath() . " Check the permissions.");
+            throw new \Exception("We were unable to delete all of the files in " . self::getAbsoluteLocalStoragePath() . " Check the permissions.");
         }
 
         return TRUE;

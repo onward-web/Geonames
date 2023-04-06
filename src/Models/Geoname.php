@@ -21,6 +21,8 @@ class Geoname extends Model {
 
     protected $primaryKey = 'geonameid';
 
+    protected $connection = GEONAMES_CONNECTION;
+
 
     /**
      * @var array An empty array, because I want all of the fields mass assignable.

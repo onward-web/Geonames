@@ -9,8 +9,11 @@ class AlternateName extends Model {
 
     use Filterable;
 
+    protected $appends = ['alternate_name_after_check'];
+
     protected $table      = 'geonames_alternate_names';
     protected $primaryKey = 'alternateNameId';
+    protected $connection = GEONAMES_CONNECTION;
 
     /**
      * The attributes that should be cast to native types.
@@ -52,5 +55,14 @@ class AlternateName extends Model {
 
     public function geoname() {
         return $this->belongsTo(Geoname::class, 'geonameid', 'geonameid');
+    }
+
+    public function getAlternateNameAfterCcheckAfterCheckAttribute()
+    {
+        if($this->alternate_name_edited && !empty($this->alternate_name_edited)){
+            return $this->alternate_name_edited;
+        }
+        return $this->alternate_name;
+
     }
 }

@@ -7,6 +7,7 @@ use MichaelDrennen\Geonames\Events\GeonameDeleted;
 
 class GeonamesDelete extends Model {
     protected $table = 'geonames_deletes';
+    protected $connection = GEONAMES_CONNECTION;
 
     const date      = 'date';
     const geonameid = 'geonameid';

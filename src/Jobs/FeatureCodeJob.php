@@ -1,113 +1,53 @@
 <?php
 
-namespace MichaelDrennen\Geonames\Console;
+namespace MichaelDrennen\Geonames\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use MichaelDrennen\Geonames\Models\GeoSetting;
 use MichaelDrennen\Geonames\Models\Log;
+use MichaelDrennen\Geonames\Traits\GeonamesJobTrait;
+use MichaelDrennen\Geonames\Models\FeatureCode;
+use Illuminate\Support\Facades\Schema;
 
-/**
- * Class FeatureCode
- *
- * @package MichaelDrennen\Geonames\Console
- */
-class FeatureCode extends AbstractCommand {
-
-    use GeonamesConsoleTrait;
-
-    /**
-     * @var string  The name and signature of the console command.
-     */
-    protected $signature = 'geonames:feature-code
-    {--language=* : Add the 2 character language code(s).}
-    {--connection= : If you want to specify the name of the database connection you want used.}
-    ';
-
-    /**
-     * @var string  The console command description.
-     */
-    protected $description = "Download and insert the feature code files from geonames. Every language. They're only ~600 rows each.";
-
+class FeatureCodeJob
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GeonamesJobTrait;
 
     /**
      * The name of our feature codes table in our database. Using constants here, so I don't need
      * to worry about typos in my code. My IDE will warn me if I'm sloppy.
      */
-    const TABLE = 'geonames_feature_codes';
+    protected $table;
 
-    /**
-     * The name of our temporary/working table in our database.
-     */
-    const TABLE_WORKING = 'geonames_feature_codes_working';
+    protected $languages;
 
+    public function __construct($languages = [])
+    {
+        $this->languages = $languages;
 
-
-    /**
-     * Create a new command instance.
-     */
-    public function __construct() {
-        parent::__construct();
+        $this->table = (new FeatureCode())->getTable();
     }
 
-    /**
-     * Execute the console command.
-     */
-    public function handle() {
-        $this->startTimer();
-        $this->connectionName = $this->option( 'connection' );
-
-        try {
-            $this->setDatabaseConnectionName();
-            $this->info( "The database connection name was set to: " . $this->connectionName );
-            $this->comment( "Testing database connection..." );
-            $this->checkDatabase();
-            $this->info( "Confirmed database connection set up correctly." );
-        } catch ( \Exception $exception ) {
-            $this->error( $exception->getMessage() );
-            $this->stopTimer();
-            throw $exception;
-        }
-
-
-        try {
-            if ( empty( $this->option( 'language' ) ) ):
-                $languages = GeoSetting::DEFAULT_LANGUAGES;
-            else:
-                $languages = $this->option( 'language' );
-            endif;
-            GeoSetting::init(
-                GeoSetting::DEFAULT_COUNTRIES_TO_BE_ADDED,
-                $languages,
-                GeoSetting::DEFAULT_STORAGE_SUBDIR,
-                $this->connectionName );
-        } catch ( \Exception $exception ) {
-            Log::error( '', "Unable to initialize the GeoSetting record.", 'init', $this->connectionName );
-            $this->stopTimer();
-            throw $exception;
-        }
-
-
+    public function handle()
+    {
         try {
             // Get all of the feature code lines from the geonames.org download page, or an array that you specify.
             $featureCodeFileDownloadLinks = $this->getFeatureCodeFileDownloadLinks(
-                array_filter( $this->option( 'language' ) )
+                array_filter( $this->languages )
             );
 
             // Download each of the files that we found.
-            $localPathsToFeatureCodeFiles = self::downloadFiles( $this, $featureCodeFileDownloadLinks,
-                                                                 $this->connectionName );
-
-            $this->makeWorkingTable( self::TABLE, self::TABLE_WORKING );
+            $localPathsToFeatureCodeFiles = self::downloadFiles( $featureCodeFileDownloadLinks,);
         } catch ( \Exception $exception ) {
-            Log::error( '', $exception->getMessage(), 'general',
-                        $this->connectionName );
+            Log::error( '', $exception->getMessage(), 'general');
             $this->error( $exception->getMessage() );
-            $this->stopTimer();
             throw $exception;
         }
-
 
         // Now that we have all of the feature code files stored locally, we need to prepare
         // the data to be inserted into our database. Convert each tab delimited row into a php
@@ -116,6 +56,7 @@ class FeatureCode extends AbstractCommand {
         // isValidRow() for details.
         $validRows = $this->getValidRowsFromFiles( $localPathsToFeatureCodeFiles );
 
+        $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
         // Now that we have our rows, let's insert them into our working table.
         $allRowsInserted = false;
@@ -123,22 +64,23 @@ class FeatureCode extends AbstractCommand {
             $allRowsInserted = $this->insertValidRows( $validRows );
         } catch ( \Exception $exception ) {
             // An additional log line to help determine the cause of the failure for the developer.
-            Log::error( '', $exception->getMessage(), 'database', $this->connectionName );
+            Log::error( '', $exception->getMessage(), 'database' );
         }
 
-        if ( $allRowsInserted === TRUE ) {
-            Schema::connection( $this->connectionName )->drop( self::TABLE );
-            Schema::connection( $this->connectionName )->rename( self::TABLE_WORKING, self::TABLE );
-            $this->info( self::TABLE . " table was truncated and refilled in " . $this->getRunTime() . " seconds." );
-        } else {
-            Log::error( '', "Failed to insert all of the " . self::TABLE . " rows.", 'database',
-                        $this->connectionName );
-            throw $exception;
+        if($allRowsInserted){
+            $this->line( "Updated: " . self::class );
+
+            do {
+                // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
+                $fаeatureCodeIdsToDelete = FeatureCode::select('id')->where('updated_at', '<', $dataBeforeStart)->limit(1000)->get()->pluck('id')->toArray();
+                FeatureCode::whereIn('id', $fаeatureCodeIdsToDelete)->delete();
+
+            } while (count($fаeatureCodeIdsToDelete) > 0);
+
         }
-        $this->stopTimer();
-        return self::SUCCESS_EXIT;
+
+
     }
-
 
     /**
      * There are feature code files on geonames.org for a few different languages. The file names
@@ -161,7 +103,7 @@ class FeatureCode extends AbstractCommand {
                 // Either add the links for all of the languages, or just the ones specified in $languageCodes.
                 $languageCode = $this->getLanguageCodeFromFeatureCodeDownloadLink( $link );
                 if ( empty( $languageCodes ) || in_array( $languageCode, $languageCodes ) ):
-                    $featureCodeFileDownloadLinks[] = self::$url . $link;
+                    $featureCodeFileDownloadLinks[] = config('geonames.url') . $link;
                 endif;
             }
         }
@@ -218,27 +160,6 @@ class FeatureCode extends AbstractCommand {
         return TRUE;
     }
 
-    /**
-     * The parsed data from the tab delimited feature code file can not be passed directly into an
-     * Eloquent create() call. So we massage the data into an associative array that can be.
-     *
-     * @param array $row A numerically indexed array of feature code data.
-     *
-     * @return array    An associative array that we can pass right into an Eloquent create() call.
-     */
-    protected function makeRowInsertable( array $row ): array {
-        list( $id, $name, $description, $language_code ) = $row;
-        list( $feature_class, $feature_code ) = explode( '.', $id );
-
-        return [ 'language_code' => $language_code,
-                 'feature_class' => $feature_class,
-                 'feature_code'  => $feature_code,
-                 'name'          => $name,
-                 'description'   => $description,
-                 'created_at'    => Carbon::now(),
-                 'updated_at'    => Carbon::now(),
-        ];
-    }
 
     /**
      * @param array $localPathsToFeatureCodeFiles
@@ -261,6 +182,7 @@ class FeatureCode extends AbstractCommand {
         return $validRows;
     }
 
+
     /**
      * Insert all of the data into our database. We insert these rows into a 'working' table, not the
      * live table. We do this so users can safely update the geonames_feature_codes table on a production box
@@ -275,35 +197,63 @@ class FeatureCode extends AbstractCommand {
         $numRowsNotInserted  = 0;
         $numRowsToBeInserted = count( $validRows );
 
-        $this->disableKeys( self::TABLE_WORKING );
-
-        // Progress bar for console display.
-        $bar = $this->output->createProgressBar( $numRowsToBeInserted );
-        $bar->setFormat( "Inserting %message% %current%/%max% [%bar%] %percent:3s%%\n" );
-        $bar->setMessage( 'feature codes' );
-        $bar->advance();
-
 
         foreach ( $validRows as $rowNumber => $row ) {
 
-            $insertResult = DB::connection( $this->connectionName )->table( self::TABLE_WORKING )
-                              ->insert( $this->makeRowInsertable( $row ) );
 
-            if ( $insertResult === TRUE ) {
+
+            list( $feature_class, $feature_code ) = explode( '.', $row[0] );
+
+
+            $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
+            $stmt = $pdo->prepare(
+                'INSERT INTO `'.$this->table.'` SET
+                                    `language_code` = :language_code,
+                                    `feature_class` = :feature_class,
+                                    `feature_code` = :feature_code,
+                                    `name` = :name,
+                                    `description` = :description,
+                                    `created_at` = :created_at,
+                                    `updated_at` = :updated_at
+                                ON DUPLICATE KEY UPDATE     
+                                    id=LAST_INSERT_ID(id),                             
+                                    `name` = :update_name,
+                                    `description` = :update_description,                                    
+                                    `updated_at` = :update_updated_at
+                                '
+            );
+            $stmt->execute(
+                [
+                    ':language_code' => $row[3],
+                    ':feature_class' => $feature_class,
+                    ':feature_code' => $feature_code,
+                    ':name' => $row[1],
+                    ':description' => $row[2],
+                    ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
+                    ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
+
+                    ':update_name' => $row[1],
+                    ':update_description' => $row[2],
+                    ':update_updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s')
+                ]
+            );
+
+
+
+
+            if ( (int)$pdo->lastInsertId() > 0 ) {
                 $numRowsInserted++;
             } else {
                 $numRowsNotInserted++;
                 $this->error( "\nRow " . $rowNumber . " of " . $numRowsToBeInserted . " was NOT inserted." );
             }
-            $bar->advance();
         }
-
-        $this->enableKeys( self::TABLE_WORKING );
 
         if ( $numRowsInserted != $numRowsToBeInserted ) {
             return FALSE;
         }
         return TRUE;
     }
+
 
 }

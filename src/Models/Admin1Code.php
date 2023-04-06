@@ -11,6 +11,7 @@ class Admin1Code extends Model {
     protected $primaryKey = 'geonameid';
     protected $table      = 'geonames_admin_1_codes';
     protected $guarded    = [];
+    protected $connection = GEONAMES_CONNECTION;
 
     /**
      * The attributes that should be casted to native types.

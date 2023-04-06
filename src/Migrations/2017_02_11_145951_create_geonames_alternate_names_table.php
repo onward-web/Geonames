@@ -38,6 +38,12 @@ class CreateGeonamesAlternateNamesTable extends Migration {
                   ->nullable();
 
             /**
+             * alternate_name_edited: alternate name or name variant/custom edit, varchar(400)
+             */
+            $table->string( 'alternate_name_edited', 400 )
+                ->nullable();
+
+            /**
              * isPreferredName: '1', if this alternate name is an official/preferred name
              */
             $table->tinyInteger( 'isPreferredName', FALSE, TRUE )
@@ -68,7 +74,10 @@ class CreateGeonamesAlternateNamesTable extends Migration {
             $table->primary( 'alternateNameId' );
             $table->index( 'geonameid' );
             $table->index( 'isolanguage' );
+            $table->index( 'alternate_name_edited' );
             $table->fullText('alternate_name');
+            $table->fullText('alternate_name_edited');
+            $table->index('updated_at');
             /**
              * I have to use the following code in place to add an index for MySQL databases.
              * $table->index( 'alternate_name' );
