@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use MichaelDrennen\Geonames\Models\PostalCode;
 
 
-class PostalCodeRepository {
+class PostalCodeRepository
+{
 
 
     /**
@@ -15,12 +16,13 @@ class PostalCodeRepository {
      * @param string $asciinameTerm
      * @return Collection
      */
-    public function getByCountry( $postalCode, $countryCode = '' ): Collection {
-        $collection = PostalCode::on( env( 'DB_GEONAMES_CONNECTION' ) )
-                             ->where( 'country_code', '=', $countryCode )
-                             ->where( 'postal_code', '=', $postalCode )
-                             ->orderBy( 'country_code', 'ASC' )
-                             ->get();
+    public function getByCountry($postalCode, $countryCode = ''): Collection
+    {
+        $collection = PostalCode::on(env('DB_GEONAMES_CONNECTION'))
+            ->where('country_code', '=', $countryCode)
+            ->where('postal_code', '=', $postalCode)
+            ->orderBy('country_code', 'ASC')
+            ->get();
 
         return $collection;
     }

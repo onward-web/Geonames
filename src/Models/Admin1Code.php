@@ -5,12 +5,13 @@ namespace MichaelDrennen\Geonames\Models;
 use Illuminate\Database\Eloquent\Model;
 use Jeidison\CompositeKey\CompositeKey;
 
-class Admin1Code extends Model {
+class Admin1Code extends Model
+{
     use CompositeKey;
 
     protected $primaryKey = 'geonameid';
-    protected $table      = 'geonames_admin_1_codes';
-    protected $guarded    = [];
+    protected $table = 'geonames_admin_1_codes';
+    protected $guarded = [];
     protected $connection = GEONAMES_CONNECTION;
 
     /**

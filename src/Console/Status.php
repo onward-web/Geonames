@@ -5,7 +5,8 @@ namespace MichaelDrennen\Geonames\Console;
 use Illuminate\Console\Command;
 use MichaelDrennen\Geonames\Models\GeoSetting;
 
-class Status extends Command {
+class Status extends Command
+{
 
     use GeonamesConsoleTrait;
 
@@ -24,7 +25,8 @@ class Status extends Command {
     /**
      * Initialize constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -32,39 +34,39 @@ class Status extends Command {
     /**
      * Execute the console command.
      */
-    public function handle() {
+    public function handle()
+    {
         $this->setDatabaseConnectionName();
         $this->line("Status of this Geonames Installation");
-        $settings = GeoSetting::on( $this->connectionName )
-                              ->first();
-
+        $settings = GeoSetting::on($this->connectionName)
+            ->first();
 
 
         $rows = [];
 
 
         $headers = ['Status',
-                    'Countries',
-                    'Countries to be Added',
-                    'Languages',
-                    'Storage Subdir',
-                    'Installed',
-                    'Last Modified',
-                    'Created',
-                    'Updated'];
+            'Countries',
+            'Countries to be Added',
+            'Languages',
+            'Storage Subdir',
+            'Installed',
+            'Last Modified',
+            'Created',
+            'Updated'];
 
         $rows[] = [$settings->status,
-                   is_array($settings->countries) ? @implode( ", ", $settings->countries ) : $settings->countries,
-                   is_array($settings->countries_to_be_added) ? @implode( ", ", $settings->countries_to_be_added ) : '',
-                   is_array($settings->languages) ? @implode( ", ", $settings->languages ) : $settings->languages,
-                   $settings->storage_subdir,
-                   isset( $settings->installed_at ) ? $settings->installed_at->diffForHumans() : '',
-                   isset( $settings->last_modified_at ) ? $settings->last_modified_at->diffForHumans() : '',
-                   isset( $settings->created_at ) ? $settings->created_at->diffForHumans() : '',
-                   isset( $settings->updated_at ) ? $settings->updated_at->diffForHumans() : ''];
+            is_array($settings->countries) ? @implode(", ", $settings->countries) : $settings->countries,
+            is_array($settings->countries_to_be_added) ? @implode(", ", $settings->countries_to_be_added) : '',
+            is_array($settings->languages) ? @implode(", ", $settings->languages) : $settings->languages,
+            $settings->storage_subdir,
+            isset($settings->installed_at) ? $settings->installed_at->diffForHumans() : '',
+            isset($settings->last_modified_at) ? $settings->last_modified_at->diffForHumans() : '',
+            isset($settings->created_at) ? $settings->created_at->diffForHumans() : '',
+            isset($settings->updated_at) ? $settings->updated_at->diffForHumans() : ''];
 
 
-        $this->table( $headers, $rows );
+        $this->table($headers, $rows);
     }
 
 }

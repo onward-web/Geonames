@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGeonamesAdmin1CodesTable extends Migration {
+class CreateGeonamesAdmin1CodesTable extends Migration
+{
 
     const TABLE = 'geonames_admin_1_codes';
 
@@ -15,20 +16,21 @@ class CreateGeonamesAdmin1CodesTable extends Migration {
      * US.CO    Colorado    Colorado    5417618
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         // In the command that I run to fill this table, I split the concatenated values in column 1 into
         // country_code and admin1_code
-        Schema::create( self::TABLE, function ( Blueprint $table ) {
+        Schema::create(self::TABLE, function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer( 'geonameid', FALSE, TRUE )->primary();         // 5417618
-            $table->char( 'country_code', 2 );      // US
-            $table->string( 'admin1_code', 20 );    // CO
-            $table->string( 'name', 255 );          // Colorado
-            $table->string( 'asciiname', 255 );     // Colorado
+            $table->integer('geonameid', FALSE, TRUE)->primary();         // 5417618
+            $table->char('country_code', 2);      // US
+            $table->string('admin1_code', 20);    // CO
+            $table->string('name', 255);          // Colorado
+            $table->string('asciiname', 255);     // Colorado
             $table->timestamps();
 
-            $table->index( 'country_code' );
-            $table->index( 'admin1_code' );
+            $table->index('country_code');
+            $table->index('admin1_code');
             $table->index('updated_at');
 
 
@@ -43,21 +45,21 @@ class CreateGeonamesAdmin1CodesTable extends Migration {
              * bytes (SQL: alter table `geonames_alternate_names` add index
              * `geonames_alternate_names_alternate_name_index`(`alternate_name`))
              */
-            $connection = config( 'database.default' );
-            $driver     = config( "database.connections.{$connection}.driver" );
+            $connection = config('database.default');
+            $driver = config("database.connections.{$connection}.driver");
 
-            if ( config( 'debug.running_in_continuous_integration' ) ):
+            if (config('debug.running_in_continuous_integration')):
                 echo "\nRUNNING THIS TEST IN CI. Index on asciiname(250) won't be created on the admin_1_codes table.";
                 flush();
-            elseif ( 'mysql' == $driver ):
+            elseif ('mysql' == $driver):
                 echo "\nRunning the mysql database driver. I'll create an index on asciiname(250) on the admin_1_codes";
                 flush();
-                $table->index( [ \Illuminate\Support\Facades\DB::raw( "asciiname(250)" ) ] );
+                $table->index([\Illuminate\Support\Facades\DB::raw("asciiname(250)")]);
             else:
                 echo "\n\nNot running the MySQL database driver. You may want to manually create an index on asciiname(250) in the admin_1_codes table.\n\n";
                 flush();
             endif;
-        } );
+        });
 
     }
 
@@ -66,7 +68,8 @@ class CreateGeonamesAdmin1CodesTable extends Migration {
      *
      * @return void
      */
-    public function down() {
-        Schema::dropIfExists( self::TABLE );
+    public function down()
+    {
+        Schema::dropIfExists(self::TABLE);
     }
 }

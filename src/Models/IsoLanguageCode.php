@@ -4,7 +4,8 @@ namespace MichaelDrennen\Geonames\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class IsoLanguageCode extends Model {
+class IsoLanguageCode extends Model
+{
 
     protected $table = 'geonames_iso_language_codes';
     protected $connection = GEONAMES_CONNECTION;
@@ -20,9 +21,9 @@ class IsoLanguageCode extends Model {
      * @var array
      */
     protected $casts = [
-        'iso_639_3'     => 'string',
-        'iso_639_2'     => 'string',
-        'iso_639_1'     => 'string',
+        'iso_639_3' => 'string',
+        'iso_639_2' => 'string',
+        'iso_639_1' => 'string',
         'language_name' => 'string',
     ];
 }

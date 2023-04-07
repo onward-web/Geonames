@@ -5,12 +5,13 @@ namespace MichaelDrennen\Geonames\Models;
 use Illuminate\Database\Eloquent\Model;
 use Jeidison\CompositeKey\CompositeKey;
 
-class Admin2Code extends Model {
+class Admin2Code extends Model
+{
     use CompositeKey;
 
     protected $primaryKey = 'geonameid';
-    protected $table      = 'geonames_admin_2_codes';
-    protected $guarded    = [];
+    protected $table = 'geonames_admin_2_codes';
+    protected $guarded = [];
     protected $connection = GEONAMES_CONNECTION;
 
     /**
@@ -18,10 +19,11 @@ class Admin2Code extends Model {
      *
      * @var array
      */
-    protected $casts = [ 'geonameid' => 'integer' ];
+    protected $casts = ['geonameid' => 'integer'];
 
-    public function geoname() {
-        return $this->hasOne( Geoname::class, 'geonameid', 'geonameid' );
+    public function geoname()
+    {
+        return $this->hasOne(Geoname::class, 'geonameid', 'geonameid');
     }
 
 

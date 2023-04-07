@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Curl\Curl;
 use MichaelDrennen\Geonames\Models\Log;
 
-class FeatureCodeSeeder extends Seeder {
+class FeatureCodeSeeder extends Seeder
+{
 
     protected $featureCodeRemoteFileName = '';
 
@@ -17,7 +18,8 @@ class FeatureCodeSeeder extends Seeder {
     protected $featureCodeLocalFilePath = '';
 
 
-    public function run() {
+    public function run()
+    {
         $this->setFeatureCodeRemoteFileName();
         $this->setFeatureCodeRemoteFilePath();
         $this->setStorage();
@@ -25,19 +27,23 @@ class FeatureCodeSeeder extends Seeder {
         $this->insert($this->featureCodeLocalFilePath);
     }
 
-    protected function setFeatureCodeRemoteFileName() {
+    protected function setFeatureCodeRemoteFileName()
+    {
         $this->featureCodeRemoteFileName = config('geonames.feature_code_file_name_prefix') . config('geonames.language') . '.txt';
     }
 
-    protected function setFeatureCodeRemoteFilePath() {
+    protected function setFeatureCodeRemoteFilePath()
+    {
         $this->featureCodeRemoteFilePath = config('geonames.download_base_url') . $this->featureCodeRemoteFileName;
     }
 
-    protected function setFeatureCodeLocalFilePath() {
+    protected function setFeatureCodeLocalFilePath()
+    {
         $this->featureCodeLocalFilePath = $this->getStorage() . $this->featureCodeRemoteFileName;
     }
 
-    protected function downloadFeatureCodeFile() {
+    protected function downloadFeatureCodeFile()
+    {
         $curl = new Curl;
         $curl->get($this->featureCodeRemoteFilePath);
 
@@ -46,7 +52,7 @@ class FeatureCodeSeeder extends Seeder {
             Log::error(
                 $this->featureCodeRemoteFilePath,
                 $curl->error_message,
-                $curl->error_code );
+                $curl->error_code);
             throw new \Exception("Unable to download the file at '" . $this->featureCodeRemoteFilePath . "', " . $curl->error_message);
         }
 
@@ -57,7 +63,7 @@ class FeatureCodeSeeder extends Seeder {
             Log::error(
                 $this->featureCodeRemoteFilePath,
                 "Unable to create the local file at '" . $this->featureCodeLocalFilePath . "', file_put_contents() returned false. Disk full? Permission problem?",
-                'local' );
+                'local');
             throw new \Exception("Unable to create the local file at '" . $this->featureCodeLocalFilePath . "', file_put_contents() returned false. Disk full? Permission problem?");
         }
     }
@@ -66,7 +72,8 @@ class FeatureCodeSeeder extends Seeder {
      * @param $localFilePath
      * @return array
      */
-    protected function fileToArray($localFilePath) {
+    protected function fileToArray($localFilePath)
+    {
         $rows = [];
         if (($handle = fopen($localFilePath, "r")) !== false) {
             while (($data = fgetcsv($handle, 0, "\t")) !== false) {
@@ -79,7 +86,8 @@ class FeatureCodeSeeder extends Seeder {
     }
 
 
-    protected function insert($localFilePath) {
+    protected function insert($localFilePath)
+    {
 
         $rows = $this->fileToArray($localFilePath);
 
@@ -87,11 +95,11 @@ class FeatureCodeSeeder extends Seeder {
             list($id, $name, $description) = $row;
             list($feature_class, $feature_code) = $id;
 
-            DB::table( 'geonames_feature_codes' )->insert( ['id'            => $id,
-                                                            'feature_class' => $feature_class,
-                                                            'feature_code'  => $feature_code,
-                                                            'name'          => $name,
-                                                            'description'   => $description,]);
+            DB::table('geonames_feature_codes')->insert(['id' => $id,
+                'feature_class' => $feature_class,
+                'feature_code' => $feature_code,
+                'name' => $name,
+                'description' => $description,]);
         }
 
 

@@ -22,7 +22,7 @@ class DownloadGeonames
 
     public function __construct()
     {
-        $this->table = (new Geoname)->getTable();       
+        $this->table = (new Geoname)->getTable();
     }
 
     public function handle()
@@ -30,13 +30,13 @@ class DownloadGeonames
         $countries = GeoSetting::getCountriesToBeAdded();
 
 
-        $remoteFilePaths = $this->getRemoteFilePathsToDownloadForGeonamesTable( $countries );
+        $remoteFilePaths = $this->getRemoteFilePathsToDownloadForGeonamesTable($countries);
 
         try {
             $this->downloadFiles($remoteFilePaths, 'geonames_files');
-        } catch ( \Exception $e ) {
-            $this->error( $e->getMessage() );
-            Log::error( '', $e->getMessage(), 'remote' );
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            Log::error('', $e->getMessage(), 'remote');
 
             return FALSE;
         }
@@ -47,14 +47,15 @@ class DownloadGeonames
      * @param array $countries The value from GeoSetting countries_to_be_added
      * @return array
      */
-    protected function getRemoteFilePathsToDownloadForGeonamesTable( array $countries ): array {
+    protected function getRemoteFilePathsToDownloadForGeonamesTable(array $countries): array
+    {
         // If the config setting for countries has the wildcard symbol "*", then the user wants data for all countries.
-        if ( array_search( "*", $countries ) !== FALSE ) {
-            return [ config('geonames.url') . config('geonames.allCountriesZipFileName') ];
+        if (array_search("*", $countries) !== FALSE) {
+            return [config('geonames.url') . config('geonames.allCountriesZipFileName')];
         }
 
         $files = [];
-        foreach ( $countries as $country ) {
+        foreach ($countries as $country) {
             // 20190527:mdd A lowercase country in this URL will give you a 404.
             $files[] = config('geonames.url') . strtoupper($country) . '.zip';
         }

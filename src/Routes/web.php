@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 
-
 //Route::get( '/geonames/search-all', '\MichaelDrennen\Geonames\Controllers\GeonamesController@ajaxJquerySearchAll' );
 
 /**
@@ -20,7 +19,7 @@ Route::get( '/geonames/{countryCode}/cities/{asciiNameTerm}', '\MichaelDrennen\G
 Route::get( '/geonames/{countryCode}/schools/{asciiNameTerm}', '\MichaelDrennen\Geonames\Controllers\GeonamesController@schoolsByCountryCode' );
 */
 
-Route::get( '/geonames', '\MichaelDrennen\Geonames\Controllers\GeonamesController@regionByCountry' )->name('api.geonames.search');
+Route::get('/geonames', '\MichaelDrennen\Geonames\Controllers\GeonamesController@regionByCountry')->name('api.geonames.search');
 
 
 /**

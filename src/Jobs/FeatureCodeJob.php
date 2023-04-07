@@ -38,14 +38,14 @@ class FeatureCodeJob
         try {
             // Get all of the feature code lines from the geonames.org download page, or an array that you specify.
             $featureCodeFileDownloadLinks = $this->getFeatureCodeFileDownloadLinks(
-                array_filter( $this->languages )
+                array_filter($this->languages)
             );
 
             // Download each of the files that we found.
-            $localPathsToFeatureCodeFiles = self::downloadFiles( $featureCodeFileDownloadLinks,);
-        } catch ( \Exception $exception ) {
-            Log::error( '', $exception->getMessage(), 'general');
-            $this->error( $exception->getMessage() );
+            $localPathsToFeatureCodeFiles = self::downloadFiles($featureCodeFileDownloadLinks,);
+        } catch (\Exception $exception) {
+            Log::error('', $exception->getMessage(), 'general');
+            $this->error($exception->getMessage());
             throw $exception;
         }
 
@@ -54,21 +54,21 @@ class FeatureCodeJob
         // array, and add the language code from the file name as another field for each row.
         // Also, we do a check to see if the row holds valid data. See the comments for
         // isValidRow() for details.
-        $validRows = $this->getValidRowsFromFiles( $localPathsToFeatureCodeFiles );
+        $validRows = $this->getValidRowsFromFiles($localPathsToFeatureCodeFiles);
 
         $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
         // Now that we have our rows, let's insert them into our working table.
         $allRowsInserted = false;
         try {
-            $allRowsInserted = $this->insertValidRows( $validRows );
-        } catch ( \Exception $exception ) {
+            $allRowsInserted = $this->insertValidRows($validRows);
+        } catch (\Exception $exception) {
             // An additional log line to help determine the cause of the failure for the developer.
-            Log::error( '', $exception->getMessage(), 'database' );
+            Log::error('', $exception->getMessage(), 'database');
         }
 
-        if($allRowsInserted){
-            $this->line( "Updated: " . self::class );
+        if ($allRowsInserted) {
+            $this->line("Updated: " . self::class);
 
             do {
                 // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
@@ -90,19 +90,20 @@ class FeatureCodeJob
      * @return array A list of all of the featureCode files from the geonames.org site.
      * @throws \ErrorException
      */
-    protected function getFeatureCodeFileDownloadLinks( array $languageCodes = [] ): array {
+    protected function getFeatureCodeFileDownloadLinks(array $languageCodes = []): array
+    {
         $links = $this->getAllLinksOnDownloadPage();
 
 
         $featureCodeFileDownloadLinks = [];
-        foreach ( $links as $link ) {
+        foreach ($links as $link) {
             $string = 'featureCodes_';
-            $length = strlen( $string );
+            $length = strlen($string);
             // If the link starts with the string in $string, then I know its a featureCodes file.
-            if ( substr( $link, 0, $length ) === $string ) {
+            if (substr($link, 0, $length) === $string) {
                 // Either add the links for all of the languages, or just the ones specified in $languageCodes.
-                $languageCode = $this->getLanguageCodeFromFeatureCodeDownloadLink( $link );
-                if ( empty( $languageCodes ) || in_array( $languageCode, $languageCodes ) ):
+                $languageCode = $this->getLanguageCodeFromFeatureCodeDownloadLink($link);
+                if (empty($languageCodes) || in_array($languageCode, $languageCodes)):
                     $featureCodeFileDownloadLinks[] = config('geonames.url') . $link;
                 endif;
             }
@@ -111,8 +112,9 @@ class FeatureCodeJob
         return $featureCodeFileDownloadLinks;
     }
 
-    private function getLanguageCodeFromFeatureCodeDownloadLink( string $link ): string {
-        return str_replace( [ 'featureCodes_', '.txt' ], '', $link );
+    private function getLanguageCodeFromFeatureCodeDownloadLink(string $link): string
+    {
+        return str_replace(['featureCodes_', '.txt'], '', $link);
     }
 
     /**
@@ -125,10 +127,11 @@ class FeatureCodeJob
      *
      * @return string   The two character language code for the feature code file.
      */
-    protected function getLanguageCodeFromFileName( string $absoluteLocalFilePath ): string {
-        $basename     = basename( $absoluteLocalFilePath, '.txt' );
-        $nameParts    = explode( '_', $basename );
-        $languageCode = $nameParts[ 1 ];
+    protected function getLanguageCodeFromFileName(string $absoluteLocalFilePath): string
+    {
+        $basename = basename($absoluteLocalFilePath, '.txt');
+        $nameParts = explode('_', $basename);
+        $languageCode = $nameParts[1];
 
         return $languageCode;
     }
@@ -148,12 +151,13 @@ class FeatureCodeJob
      * @param array $row
      * @return boolean
      */
-    protected function isValidRow( array $row ): bool {
-        $classAndCode = explode( '.', $row[ 0 ] );
-        if ( count( $classAndCode ) != 2 ) {
+    protected function isValidRow(array $row): bool
+    {
+        $classAndCode = explode('.', $row[0]);
+        if (count($classAndCode) != 2) {
             return FALSE;
         }
-        if ( empty( $classAndCode[ 0 ] ) || empty( $classAndCode[ 1 ] ) ) {
+        if (empty($classAndCode[0]) || empty($classAndCode[1])) {
             return FALSE;
         }
 
@@ -166,15 +170,16 @@ class FeatureCodeJob
      *
      * @return array
      */
-    protected function getValidRowsFromFiles( array $localPathsToFeatureCodeFiles ): array {
+    protected function getValidRowsFromFiles(array $localPathsToFeatureCodeFiles): array
+    {
         $validRows = [];
-        foreach ( $localPathsToFeatureCodeFiles as $i => $file ) {
-            $languageCode = $this->getLanguageCodeFromFileName( $file );
-            $dataRows     = self::csvFileToArray( $file );
-            foreach ( $dataRows as $j => $row ) {
-                if ( $this->isValidRow( $row ) ) {
-                    $dataRows[ $j ][] = $languageCode;
-                    $validRows[]      = $dataRows[ $j ];
+        foreach ($localPathsToFeatureCodeFiles as $i => $file) {
+            $languageCode = $this->getLanguageCodeFromFileName($file);
+            $dataRows = self::csvFileToArray($file);
+            foreach ($dataRows as $j => $row) {
+                if ($this->isValidRow($row)) {
+                    $dataRows[$j][] = $languageCode;
+                    $validRows[] = $dataRows[$j];
                 }
             }
         }
@@ -192,22 +197,22 @@ class FeatureCodeJob
      *
      * @return bool Returns true if all of the rows were inserted. False otherwise.
      */
-    protected function insertValidRows( array $validRows ): bool {
-        $numRowsInserted     = 0;
-        $numRowsNotInserted  = 0;
-        $numRowsToBeInserted = count( $validRows );
+    protected function insertValidRows(array $validRows): bool
+    {
+        $numRowsInserted = 0;
+        $numRowsNotInserted = 0;
+        $numRowsToBeInserted = count($validRows);
 
 
-        foreach ( $validRows as $rowNumber => $row ) {
+        foreach ($validRows as $rowNumber => $row) {
 
 
-
-            list( $feature_class, $feature_code ) = explode( '.', $row[0] );
+            list($feature_class, $feature_code) = explode('.', $row[0]);
 
 
             $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
             $stmt = $pdo->prepare(
-                'INSERT INTO `'.$this->table.'` SET
+                'INSERT INTO `' . $this->table . '` SET
                                     `language_code` = :language_code,
                                     `feature_class` = :feature_class,
                                     `feature_code` = :feature_code,
@@ -239,17 +244,15 @@ class FeatureCodeJob
             );
 
 
-
-
-            if ( (int)$pdo->lastInsertId() > 0 ) {
+            if ((int)$pdo->lastInsertId() > 0) {
                 $numRowsInserted++;
             } else {
                 $numRowsNotInserted++;
-                $this->error( "\nRow " . $rowNumber . " of " . $numRowsToBeInserted . " was NOT inserted." );
+                $this->error("\nRow " . $rowNumber . " of " . $numRowsToBeInserted . " was NOT inserted.");
             }
         }
 
-        if ( $numRowsInserted != $numRowsToBeInserted ) {
+        if ($numRowsInserted != $numRowsToBeInserted) {
             return FALSE;
         }
         return TRUE;

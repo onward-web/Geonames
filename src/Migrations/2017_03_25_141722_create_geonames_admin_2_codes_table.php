@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGeonamesAdmin2CodesTable extends Migration {
+class CreateGeonamesAdmin2CodesTable extends Migration
+{
 
     const TABLE = 'geonames_admin_2_codes';
 
@@ -16,24 +17,25 @@ class CreateGeonamesAdmin2CodesTable extends Migration {
      *
      * @return void
      */
-    public function up() {
+    public function up()
+    {
         // Format : concatenated codes <tab>name <tab> asciiname <tab> geonameId
-        Schema::create( self::TABLE, function ( Blueprint $table ) {
+        Schema::create(self::TABLE, function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer( 'geonameid', FALSE, TRUE )->primary();                // 5581553
-            $table->char( 'country_code', 2 )->nullable();              // US
-            $table->string( 'admin1_code', 20 )->nullable();            // CO
-            $table->string( 'admin2_code', 80 )->nullable();            // 107
-            $table->string( 'name', 255 )->nullable();                  // Routt County
-            $table->string( 'asciiname', 255 )->nullable();             // Routt County
+            $table->integer('geonameid', FALSE, TRUE)->primary();                // 5581553
+            $table->char('country_code', 2)->nullable();              // US
+            $table->string('admin1_code', 20)->nullable();            // CO
+            $table->string('admin2_code', 80)->nullable();            // 107
+            $table->string('name', 255)->nullable();                  // Routt County
+            $table->string('asciiname', 255)->nullable();             // Routt County
             $table->timestamps();
 
-            $table->index( 'country_code' );
-            $table->index( 'admin1_code' );
-            $table->index( 'admin2_code' );
-            $table->index( [ 'country_code', 'admin1_code' ] );
+            $table->index('country_code');
+            $table->index('admin1_code');
+            $table->index('admin2_code');
+            $table->index(['country_code', 'admin1_code']);
             $table->index('updated_at');
-        } );
+        });
     }
 
     /**
@@ -41,7 +43,8 @@ class CreateGeonamesAdmin2CodesTable extends Migration {
      *
      * @return void
      */
-    public function down() {
-        Schema::dropIfExists( self::TABLE );
+    public function down()
+    {
+        Schema::dropIfExists(self::TABLE);
     }
 }

@@ -127,7 +127,7 @@ class GeoSetting extends Model
      * @return bool
      * @throws Exception
      */
-    public static function install(array  $countriesToBeAdded, array  $languages, string $storageSubDir = self::DEFAULT_STORAGE_SUBDIR): bool
+    public static function install(array $countriesToBeAdded, array $languages, string $storageSubDir = self::DEFAULT_STORAGE_SUBDIR): bool
     {
 
         $storageSubDir = empty($storageSubDir) ? self::DEFAULT_STORAGE_SUBDIR : $storageSubDir;

@@ -49,13 +49,13 @@ class Admin2CodeJob
 
         $remoteUrl = config('geonames.url') . self::REMOTE_FILE_NAME;
 
-        DB::connection( GEONAMES_CONNECTION)->table( $this->table  )->truncate();
+        DB::connection(GEONAMES_CONNECTION)->table($this->table)->truncate();
 
         try {
-            $absoluteLocalPath = $this->downloadFile( $remoteUrl );
-        } catch ( \Exception $e ) {
-            $this->error( $e->getMessage() );
-            Log::error( $remoteUrl, $e->getMessage(), 'remote');
+            $absoluteLocalPath = $this->downloadFile($remoteUrl);
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            Log::error($remoteUrl, $e->getMessage(), 'remote');
             return FALSE;
         }
 
@@ -71,14 +71,12 @@ class Admin2CodeJob
 
             } while (count($admin2CodeGeonameIdsToDelete) > 0);
 
-            $this->info( "The admin_2_codes data was downloaded and inserted" );
+            $this->info("The admin_2_codes data was downloaded and inserted");
 
         } catch (\Exception $exception) {
             $this->error($exception->getMessage());
             return -3;
         }
-
-
 
 
     }
@@ -93,7 +91,8 @@ class Admin2CodeJob
      *
      * @throws \MichaelDrennen\LocalFile\Exceptions\UnableToOpenFile
      */
-    protected function insertAdmin2Codes( string $localFilePath ) {
+    protected function insertAdmin2Codes(string $localFilePath)
+    {
         $file = fopen($localFilePath, 'r');
         while (($line = fgets($file, null)) !== FALSE) {
 
@@ -152,10 +151,6 @@ class Admin2CodeJob
 
 
         }
-
-
-
-
 
 
     }

@@ -44,41 +44,40 @@ class NoCountryJob
 
 
         try {
-            $localZipFile = $this->downloadFile( $downloadLink, 'no-country');
-        } catch ( \Exception $e ) {
-            $this->error( $e->getMessage() );
-            Log::error( $downloadLink, $e->getMessage(), 'remote' );
+            $localZipFile = $this->downloadFile($downloadLink, 'no-country');
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            Log::error($downloadLink, $e->getMessage(), 'remote');
 
             return FALSE;
         }
 
 
         try {
-            $this->line( "Unzipping " . $localZipFile );
-            $this->unzip( $localZipFile, 'no-country');
-        } catch ( \Exception $e ) {
-            $this->error( $e->getMessage() );
-            Log::error( $localZipFile, $e->getMessage(), 'local');
+            $this->line("Unzipping " . $localZipFile);
+            $this->unzip($localZipFile, 'no-country');
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            Log::error($localZipFile, $e->getMessage(), 'local');
 
             return FALSE;
         }
 
-        $localTextFile = GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'no-country' . DIRECTORY_SEPARATOR .  config('geonames.noCountriesTextFileName');
+        $localTextFile = GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'no-country' . DIRECTORY_SEPARATOR . config('geonames.noCountriesTextFileName');
 
-        if ( ! file_exists( $localTextFile ) ) {
-            throw new \Exception( "The unzipped file could not be found. We were looking for: " . $localTextFile );
+        if (!file_exists($localTextFile)) {
+            throw new \Exception("The unzipped file could not be found. We were looking for: " . $localTextFile);
         }
 
         $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
 
-
-        $this->insertNoCountry( $localTextFile );
+        $this->insertNoCountry($localTextFile);
 
         do {
             // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
             $geonameIdsToDelete = Geoname::select('geonameid')->where('updated_at', '<', $dataBeforeStart)
-                ->orWhere(function ($query){
+                ->orWhere(function ($query) {
                     $query->whereNull('country_code')
                         ->where('country_code', '');
                 })
@@ -91,12 +90,8 @@ class NoCountryJob
         } while (count($geonameIdsToDelete) > 0);
 
 
-        $this->info( "The no-country data was downloaded and inserted in seconds." );
+        $this->info("The no-country data was downloaded and inserted in seconds.");
     }
-
-
-
-
 
 
     /**
@@ -106,15 +101,15 @@ class NoCountryJob
     protected function insertNoCountry($localFilePath)
     {
 
-        $file = fopen( $localFilePath, 'r' );
+        $file = fopen($localFilePath, 'r');
 
-        while ( ( $line = fgets( $file, null ) ) !== FALSE ) {
+        while (($line = fgets($file, null)) !== FALSE) {
             $row = str_getcsv($line, "\t");
 
 
             $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
             $stmt = $pdo->prepare(
-                'INSERT INTO `'.$this->table.'` SET
+                'INSERT INTO `' . $this->table . '` SET
                                     `geonameid` = :geonameid,
                                     `name` = :name,
                                     `asciiname` = :asciiname,
@@ -160,52 +155,52 @@ class NoCountryJob
             );
             $stmt->execute(
                 [
-                    ':geonameid'         => $row[ 0 ],
-                    ':name'              => $row[ 1 ],
-                    ':asciiname'         => $row[ 2 ],
-                    ':alternatenames'    => $row[ 3 ],
-                    ':latitude'          => $row[ 4 ],
-                    ':longitude'         => $row[ 5 ],
-                    ':feature_class'     => $row[ 6 ],
-                    ':feature_code'      => $row[ 7 ],
-                    ':country_code'      => $row[ 8 ],
-                    ':cc2'               => $row[ 9 ],
-                    ':admin1_code'       => $row[ 10 ],
-                    ':admin2_code'       => $row[ 11 ],
-                    ':admin3_code'       => $row[ 12 ],
-                    ':admin4_code'       => $row[ 13 ],
-                    ':population'        => $row[ 14 ],
-                    ':elevation'         => $row[ 15 ],
-                    ':dem'               => $row[ 16 ],
-                    ':timezone'          => $row[ 17 ],
-                    ':modification_date' => $row[ 18 ],
+                    ':geonameid' => $row[0],
+                    ':name' => $row[1],
+                    ':asciiname' => $row[2],
+                    ':alternatenames' => $row[3],
+                    ':latitude' => $row[4],
+                    ':longitude' => $row[5],
+                    ':feature_class' => $row[6],
+                    ':feature_code' => $row[7],
+                    ':country_code' => $row[8],
+                    ':cc2' => $row[9],
+                    ':admin1_code' => $row[10],
+                    ':admin2_code' => $row[11],
+                    ':admin3_code' => $row[12],
+                    ':admin4_code' => $row[13],
+                    ':population' => $row[14],
+                    ':elevation' => $row[15],
+                    ':dem' => $row[16],
+                    ':timezone' => $row[17],
+                    ':modification_date' => $row[18],
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                    ':update_geonameid'         => $row[ 0 ],
-                    ':update_name'              => $row[ 1 ],
-                    ':update_asciiname'         => $row[ 2 ],
-                    ':update_alternatenames'    => $row[ 3 ],
-                    ':update_latitude'          => $row[ 4 ],
-                    ':update_longitude'         => $row[ 5 ],
-                    ':update_feature_class'     => $row[ 6 ],
-                    ':update_feature_code'      => $row[ 7 ],
-                    ':update_country_code'      => $row[ 8 ],
-                    ':update_cc2'               => $row[ 9 ],
-                    ':update_admin1_code'       => $row[ 10 ],
-                    ':update_admin2_code'       => $row[ 11 ],
-                    ':update_admin3_code'       => $row[ 12 ],
-                    ':update_admin4_code'       => $row[ 13 ],
-                    ':update_population'        => $row[ 14 ],
-                    ':update_elevation'         => $row[ 15 ],
-                    ':update_dem'               => $row[ 16 ],
-                    ':update_timezone'          => $row[ 17 ],
-                    ':update_modification_date' => $row[ 18 ],
+                    ':update_geonameid' => $row[0],
+                    ':update_name' => $row[1],
+                    ':update_asciiname' => $row[2],
+                    ':update_alternatenames' => $row[3],
+                    ':update_latitude' => $row[4],
+                    ':update_longitude' => $row[5],
+                    ':update_feature_class' => $row[6],
+                    ':update_feature_code' => $row[7],
+                    ':update_country_code' => $row[8],
+                    ':update_cc2' => $row[9],
+                    ':update_admin1_code' => $row[10],
+                    ':update_admin2_code' => $row[11],
+                    ':update_admin3_code' => $row[12],
+                    ':update_admin4_code' => $row[13],
+                    ':update_population' => $row[14],
+                    ':update_elevation' => $row[15],
+                    ':update_dem' => $row[16],
+                    ':update_timezone' => $row[17],
+                    ':update_modification_date' => $row[18],
                     ':update_updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
                 ]);
         }
-        fclose( $file );
+        fclose($file);
 
     }
 }

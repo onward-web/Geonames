@@ -1,11 +1,13 @@
 <?php
+
 namespace MichaelDrennen\Geonames\Listeners;
 
 use MichaelDrennen\Geonames\Events\GeonameUpdated;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateUsers implements ShouldQueue {
+class UpdateUsers implements ShouldQueue
+{
     /**
      * The name of the connection the job should be sent to.
      *
@@ -23,17 +25,19 @@ class UpdateUsers implements ShouldQueue {
     /**
      * Create the event listener.
      */
-    public function __construct () {
+    public function __construct()
+    {
         //
     }
 
     /**
      * Handle the event.
      *
-     * @param  GeonameUpdated $event
+     * @param GeonameUpdated $event
      * @return void
      */
-    public function handle ( GeonameUpdated $event ) {
+    public function handle(GeonameUpdated $event)
+    {
         // Access the geoname record using $event->geoname...
     }
 }

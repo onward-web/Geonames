@@ -1,4 +1,5 @@
 <?php
+
 namespace MichaelDrennen\Geonames\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -15,7 +16,7 @@ class UpdateGeonameByTranslateText
     public function handle()
     {
         GeonameTranslateText::chunkById(100, function ($translateTexts) {
-            foreach($translateTexts as $translateText){
+            foreach ($translateTexts as $translateText) {
 
                 AlternateName::where('alternate_name', $translateText->source_text)
                     ->where('isolanguage', $translateText->source_lang)

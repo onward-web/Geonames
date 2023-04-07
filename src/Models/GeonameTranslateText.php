@@ -12,7 +12,8 @@ use EloquentFilter\Filterable;
 use Jeidison\CompositeKey\CompositeKey;
 
 
-class GeonameTranslateText extends Model {
+class GeonameTranslateText extends Model
+{
 
     use Filterable;
     use CompositeKey;
@@ -28,7 +29,6 @@ class GeonameTranslateText extends Model {
      * @var array An empty array, because I want all of the fields mass assignable.
      */
     protected $guarded = [];
-
 
 
 }

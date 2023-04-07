@@ -71,5 +71,5 @@ class FeatureClassJob
         $this->info($this->table . " table was truncated and refilled");
     }
 
-   
+
 }

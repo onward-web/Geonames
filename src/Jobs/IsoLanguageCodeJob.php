@@ -1,4 +1,5 @@
 <?php
+
 namespace MichaelDrennen\Geonames\Jobs;
 
 use Carbon\Carbon;
@@ -17,6 +18,7 @@ use Illuminate\Support\Arr;
 class IsoLanguageCodeJob //implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GeonamesJobTrait;
+
     protected $table;
     protected $countries;
     protected $languages;
@@ -48,13 +50,13 @@ class IsoLanguageCodeJob //implements ShouldQueue
         $remotePath = config('geonames.url') . self::LANGUAGE_CODES_FILE_NAME;
         $absoluteLocalFilePathOfIsoLanguageCodesFile = self::downloadFile($remotePath);
 
-        if ( !file_exists( $absoluteLocalFilePathOfIsoLanguageCodesFile ) ) {
-            throw new \Exception( "We were unable to download the file at: " . $absoluteLocalFilePathOfIsoLanguageCodesFile );
+        if (!file_exists($absoluteLocalFilePathOfIsoLanguageCodesFile)) {
+            throw new \Exception("We were unable to download the file at: " . $absoluteLocalFilePathOfIsoLanguageCodesFile);
         }
 
         $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
-        $this->insertIsoLanguageCodes( $absoluteLocalFilePathOfIsoLanguageCodesFile );
+        $this->insertIsoLanguageCodes($absoluteLocalFilePathOfIsoLanguageCodesFile);
 
         do {
             // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
@@ -64,45 +66,41 @@ class IsoLanguageCodeJob //implements ShouldQueue
         } while (count($isoLanguageCodeIso6393sToDelete) > 0);
 
 
-        $this->info( "iso_language_codes data was downloaded and inserted" );
+        $this->info("iso_language_codes data was downloaded and inserted");
     }
-
-
-
-
-
 
 
     /**
      * @param string $localFilePath
      * @throws Exception
      */
-    protected function insertIsoLanguageCodes( string $localFilePath ) {
+    protected function insertIsoLanguageCodes(string $localFilePath)
+    {
 
-        $this->line( "Inserting insertIsoLanguageCodes: " . $localFilePath );
+        $this->line("Inserting insertIsoLanguageCodes: " . $localFilePath);
 
         $iRow = 0;
         $rows = [];
-        $file = fopen( $localFilePath, 'r' );
-        while ( ( $line = fgets( $file, null) ) !== FALSE ) {
+        $file = fopen($localFilePath, 'r');
+        while (($line = fgets($file, null)) !== FALSE) {
             ++$iRow;
-            if($iRow <= 1){
+            if ($iRow <= 1) {
                 continue;
             }
             $row = str_getcsv($line, "\t");
 
-            $iso_639_3  = Arr::get($row, 0);
-            $iso_639_2  = Arr::get($row, 1);
-            $iso_639_1  = Arr::get($row, 2);
-            $languageName  = Arr::get($row, 3);
+            $iso_639_3 = Arr::get($row, 0);
+            $iso_639_2 = Arr::get($row, 1);
+            $iso_639_1 = Arr::get($row, 2);
+            $languageName = Arr::get($row, 3);
 
-            if(empty($iso_639_3)){
+            if (empty($iso_639_3)) {
                 $iso_639_3 = $iso_639_2;
             }
 
             $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
             $stmt = $pdo->prepare(
-                'INSERT INTO `'.$this->table.'` SET
+                'INSERT INTO `' . $this->table . '` SET
                                     `iso_639_3` = :iso_639_3,
                                     `iso_639_2` = :iso_639_2,
                                     `iso_639_1` = :iso_639_1,  
@@ -132,7 +130,7 @@ class IsoLanguageCodeJob //implements ShouldQueue
                 ]
             );
         }
-        fclose( $file );
+        fclose($file);
 
     }
 

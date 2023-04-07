@@ -1,4 +1,5 @@
 <?php
+
 namespace MichaelDrennen\Geonames\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -44,15 +45,15 @@ class InstallJob //implements ShouldQueue
             $this->storageSubDir
         );
 
-        GeoSetting::setStatus( GeoSetting::STATUS_INSTALLING);
+        GeoSetting::setStatus(GeoSetting::STATUS_INSTALLING);
 
         //$emptyDirResult = GeoSetting::emptyTheStorageDirectory();
         $emptyDirResult = true;
-        if ( $emptyDirResult === TRUE ):
-            $this->line( "This storage dir has been emptied: " . GeoSetting::getAbsoluteLocalStoragePath() );
+        if ($emptyDirResult === TRUE):
+            $this->line("This storage dir has been emptied: " . GeoSetting::getAbsoluteLocalStoragePath());
         endif;
 
-        $this->line( "Starting " . self::class);
+        $this->line("Starting " . self::class);
 
 
         $featureCodeJobInstance = new FeatureCodeJob($this->languages);

@@ -50,12 +50,12 @@ class InsertGeonamesJob
             throw $e;
         }
 
-        $textFiles  = $this->getLocalCountryTxtFileNames();
+        $textFiles = $this->getLocalCountryTxtFileNames();
 
         $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
         try {
-            $this->insertGeonames( $textFiles );
+            $this->insertGeonames($textFiles);
 
             do {
                 // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
@@ -64,14 +64,12 @@ class InsertGeonamesJob
 
             } while (count($geonameIds) > 0);
 
-        } catch ( \Exception $e ) {
-            $this->error( $e->getMessage() );
-            Log::error( '', $e->getMessage(), 'database' );
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+            Log::error('', $e->getMessage(), 'database');
         }
 
     }
-
-
 
 
     /**
@@ -84,15 +82,15 @@ class InsertGeonamesJob
      */
     private function getLocalCountryZipFileNames()
     {
-        $storagePath = GeoSetting::getAbsoluteLocalStoragePath().DIRECTORY_SEPARATOR.'geonames_files';
+        $storagePath = GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'geonames_files';
 
         $zipFileNames = [];
         foreach (new \DirectoryIterator($storagePath) as $fileInfo) {
-            if($fileInfo->isDot()) continue;
+            if ($fileInfo->isDot()) continue;
 
-            if($fileInfo->getFilename() === config('geonames.allCountriesZipFileName')){
+            if ($fileInfo->getFilename() === config('geonames.allCountriesZipFileName')) {
                 return [$fileInfo->getPathName()];
-            }else if($fileInfo->getExtension() === 'zip' && preg_match( '/^[A-Z]{2}\.zip$/', $fileInfo->getFilename() ) === 1){
+            } else if ($fileInfo->getExtension() === 'zip' && preg_match('/^[A-Z]{2}\.zip$/', $fileInfo->getFilename()) === 1) {
                 $zipFileNames[] = $fileInfo->getPathName();
             }
 
@@ -110,15 +108,15 @@ class InsertGeonamesJob
      */
     protected function getLocalCountryTxtFileNames(): array
     {
-        $storagePath = GeoSetting::getAbsoluteLocalStoragePath().DIRECTORY_SEPARATOR.'geonames_files';
+        $storagePath = GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'geonames_files';
 
         $txtFiles = [];
         foreach (new \DirectoryIterator($storagePath) as $fileInfo) {
-            if($fileInfo->isDot()) continue;
+            if ($fileInfo->isDot()) continue;
 
-            if($fileInfo->getFilename() === config('geonames.allCountriesTxtFileName')){
+            if ($fileInfo->getFilename() === config('geonames.allCountriesTxtFileName')) {
                 return [$fileInfo->getPathName()];
-            }else if($fileInfo->getExtension() === 'txt' && preg_match( '/^[A-Z]{2}\.txt$/', $fileInfo->getFilename() ) === 1){
+            } else if ($fileInfo->getExtension() === 'txt' && preg_match('/^[A-Z]{2}\.txt$/', $fileInfo->getFilename()) === 1) {
                 $txtFiles[] = $fileInfo->getPathName();
             }
         }
@@ -127,26 +125,25 @@ class InsertGeonamesJob
     }
 
 
-
-
     /**
-     * @param $localFilePaths[]
+     * @param $localFilePaths []
      * @throws \MichaelDrennen\LocalFile\Exceptions\UnableToOpenFile
      */
-    protected function insertGeonames( $textFiles ) {
+    protected function insertGeonames($textFiles)
+    {
         $coutryCodes = [];
 
 
-        foreach($textFiles as $textFile){
-            $file = fopen( $textFile, 'r' );
+        foreach ($textFiles as $textFile) {
+            $file = fopen($textFile, 'r');
 
-            while ( ( $line = fgets( $file, null ) ) !== FALSE ) {
+            while (($line = fgets($file, null)) !== FALSE) {
                 $row = str_getcsv($line, "\t");
 
 
                 $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
                 $stmt = $pdo->prepare(
-                    'INSERT INTO `'.$this->table.'` SET
+                    'INSERT INTO `' . $this->table . '` SET
                                     `geonameid` = :geonameid,
                                     `name` = :name,
                                     `asciiname` = :asciiname,
@@ -192,60 +189,58 @@ class InsertGeonamesJob
                 );
                 $stmt->execute(
                     [
-                        ':geonameid'         => $row[ 0 ],
-                        ':name'              => $row[ 1 ],
-                        ':asciiname'         => $row[ 2 ],
-                        ':alternatenames'    => $row[ 3 ],
-                        ':latitude'          => $row[ 4 ],
-                        ':longitude'         => $row[ 5 ],
-                        ':feature_class'     => $row[ 6 ],
-                        ':feature_code'      => $row[ 7 ],
-                        ':country_code'      => $row[ 8 ],
-                        ':cc2'               => $row[ 9 ],
-                        ':admin1_code'       => $row[ 10 ],
-                        ':admin2_code'       => $row[ 11 ],
-                        ':admin3_code'       => $row[ 12 ],
-                        ':admin4_code'       => $row[ 13 ],
-                        ':population'        => $row[ 14 ],
-                        ':elevation'         => $row[ 15 ],
-                        ':dem'               => $row[ 16 ],
-                        ':timezone'          => $row[ 17 ],
-                        ':modification_date' => $row[ 18 ],
+                        ':geonameid' => $row[0],
+                        ':name' => $row[1],
+                        ':asciiname' => $row[2],
+                        ':alternatenames' => $row[3],
+                        ':latitude' => $row[4],
+                        ':longitude' => $row[5],
+                        ':feature_class' => $row[6],
+                        ':feature_code' => $row[7],
+                        ':country_code' => $row[8],
+                        ':cc2' => $row[9],
+                        ':admin1_code' => $row[10],
+                        ':admin2_code' => $row[11],
+                        ':admin3_code' => $row[12],
+                        ':admin4_code' => $row[13],
+                        ':population' => $row[14],
+                        ':elevation' => $row[15],
+                        ':dem' => $row[16],
+                        ':timezone' => $row[17],
+                        ':modification_date' => $row[18],
                         ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                         ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                        ':update_geonameid'         => $row[ 0 ],
-                        ':update_name'              => $row[ 1 ],
-                        ':update_asciiname'         => $row[ 2 ],
-                        ':update_alternatenames'    => $row[ 3 ],
-                        ':update_latitude'          => $row[ 4 ],
-                        ':update_longitude'         => $row[ 5 ],
-                        ':update_feature_class'     => $row[ 6 ],
-                        ':update_feature_code'      => $row[ 7 ],
-                        ':update_country_code'      => $row[ 8 ],
-                        ':update_cc2'               => $row[ 9 ],
-                        ':update_admin1_code'       => $row[ 10 ],
-                        ':update_admin2_code'       => $row[ 11 ],
-                        ':update_admin3_code'       => $row[ 12 ],
-                        ':update_admin4_code'       => $row[ 13 ],
-                        ':update_population'        => $row[ 14 ],
-                        ':update_elevation'         => $row[ 15 ],
-                        ':update_dem'               => $row[ 16 ],
-                        ':update_timezone'          => $row[ 17 ],
-                        ':update_modification_date' => $row[ 18 ],
+                        ':update_geonameid' => $row[0],
+                        ':update_name' => $row[1],
+                        ':update_asciiname' => $row[2],
+                        ':update_alternatenames' => $row[3],
+                        ':update_latitude' => $row[4],
+                        ':update_longitude' => $row[5],
+                        ':update_feature_class' => $row[6],
+                        ':update_feature_code' => $row[7],
+                        ':update_country_code' => $row[8],
+                        ':update_cc2' => $row[9],
+                        ':update_admin1_code' => $row[10],
+                        ':update_admin2_code' => $row[11],
+                        ':update_admin3_code' => $row[12],
+                        ':update_admin4_code' => $row[13],
+                        ':update_population' => $row[14],
+                        ':update_elevation' => $row[15],
+                        ':update_dem' => $row[16],
+                        ':update_timezone' => $row[17],
+                        ':update_modification_date' => $row[18],
                         ':update_updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
                     ]);
             }
-            fclose( $file );
+            fclose($file);
         }
 
 
-        GeoSetting::setCountriesFromCountriesToBeAdded( GEONAMES_CONNECTION );
+        GeoSetting::setCountriesFromCountriesToBeAdded(GEONAMES_CONNECTION);
 
     }
-
-
 
 
     /**
@@ -256,8 +251,9 @@ class InsertGeonamesJob
      *
      * @return bool
      */
-    private function allCountriesInLocalTxtFiles( array $txtFiles ): bool {
-        if ( in_array( $this->allCountriesTxtFileName, $txtFiles ) ) {
+    private function allCountriesInLocalTxtFiles(array $txtFiles): bool
+    {
+        if (in_array($this->allCountriesTxtFileName, $txtFiles)) {
             return TRUE;
         }
 

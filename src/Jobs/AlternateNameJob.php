@@ -16,6 +16,7 @@ use MichaelDrennen\Geonames\Models\Log;
 use MichaelDrennen\Geonames\Traits\GeonamesJobTrait;
 use MichaelDrennen\LocalFile\LocalFile;
 use Illuminate\Support\Facades\DB;
+
 class AlternateNameJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GeonamesJobTrait;
@@ -56,43 +57,42 @@ class AlternateNameJob
         );
 
 
-
-        $urlsToAlternateNamesZipFiles = $this->getAlternateNameDownloadLinks( $this->countries );
+        $urlsToAlternateNamesZipFiles = $this->getAlternateNameDownloadLinks($this->countries);
 
         $absoluteLocalFilePathsOfAlternateNamesZipFiles = [];
-        foreach ( $urlsToAlternateNamesZipFiles as $countryCode => $urlsToAlternateNamesZipFile ) {
+        foreach ($urlsToAlternateNamesZipFiles as $countryCode => $urlsToAlternateNamesZipFile) {
             try {
-                $absoluteLocalFilePathsOfAlternateNamesZipFiles[ $countryCode ] = $this->downloadFile($urlsToAlternateNamesZipFile);
-            } catch ( \Exception $e ) {
-                $this->error( $e->getMessage() );
-                Log::error( $urlsToAlternateNamesZipFiles, $e->getMessage(), 'remote', $this->connectionName );
+                $absoluteLocalFilePathsOfAlternateNamesZipFiles[$countryCode] = $this->downloadFile($urlsToAlternateNamesZipFile);
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+                Log::error($urlsToAlternateNamesZipFiles, $e->getMessage(), 'remote', $this->connectionName);
 
                 return FALSE;
             }
         }
 
-        $this->info( "Done downloading alternate zip files." );
+        $this->info("Done downloading alternate zip files.");
 
         $dataBeforeStart = (string)Carbon::now()->format('Y-m-d H:i:s');
 
-        foreach ( $absoluteLocalFilePathsOfAlternateNamesZipFiles as $countryCode => $absoluteLocalFilePathOfAlternateNamesZipFile ) {
+        foreach ($absoluteLocalFilePathsOfAlternateNamesZipFiles as $countryCode => $absoluteLocalFilePathOfAlternateNamesZipFile) {
             try {
-                $this->unzip( $absoluteLocalFilePathOfAlternateNamesZipFile, 'alternateNames');
-                $this->info( "Unzipped " . $absoluteLocalFilePathOfAlternateNamesZipFile );
-            } catch ( \Exception $e ) {
-                $this->error( $e->getMessage() );
-                Log::error( $absoluteLocalFilePathOfAlternateNamesZipFile, $e->getMessage(), 'local');
+                $this->unzip($absoluteLocalFilePathOfAlternateNamesZipFile, 'alternateNames');
+                $this->info("Unzipped " . $absoluteLocalFilePathOfAlternateNamesZipFile);
+            } catch (\Exception $e) {
+                $this->error($e->getMessage());
+                Log::error($absoluteLocalFilePathOfAlternateNamesZipFile, $e->getMessage(), 'local');
 
                 return FALSE;
             }
 
-            $absoluteLocalFilePathOfAlternateNamesFile = $this->getLocalAbsolutePathToAlternateNamesTextFile( $countryCode );
+            $absoluteLocalFilePathOfAlternateNamesFile = $this->getLocalAbsolutePathToAlternateNamesTextFile($countryCode);
 
-            if ( ! file_exists( $absoluteLocalFilePathOfAlternateNamesFile ) ) {
-                throw new \Exception( "The unzipped file could not be found. We were looking for: " . $absoluteLocalFilePathOfAlternateNamesFile );
+            if (!file_exists($absoluteLocalFilePathOfAlternateNamesFile)) {
+                throw new \Exception("The unzipped file could not be found. We were looking for: " . $absoluteLocalFilePathOfAlternateNamesFile);
             }
 
-            $this->insertAlternateNames( $absoluteLocalFilePathOfAlternateNamesFile );
+            $this->insertAlternateNames($absoluteLocalFilePathOfAlternateNamesFile);
 
         }
 
@@ -104,7 +104,6 @@ class AlternateNameJob
         } while (count($geonamesAlternateNameIds) > 0);
 
 
-
     }
 
     /**
@@ -112,14 +111,15 @@ class AlternateNameJob
      *
      * @return array   The absolute paths to the remote alternate names zip files.
      */
-    protected function getAlternateNameDownloadLinks( array $countryCodes = [] ): array {
-        if ( empty( $countryCodes ) || array_search('*', $countryCodes, true) !== FALSE  ):
-            return [ '*' => config('geonames.url') . self::REMOTE_FILE_NAME_FOR_ALL ];
+    protected function getAlternateNameDownloadLinks(array $countryCodes = []): array
+    {
+        if (empty($countryCodes) || array_search('*', $countryCodes, true) !== FALSE):
+            return ['*' => config('geonames.url') . self::REMOTE_FILE_NAME_FOR_ALL];
         endif;
 
         $alternateNameDownloadLinks = [];
-        foreach ( $countryCodes as $i => $countryCode ) {
-            $alternateNameDownloadLinks[ $countryCode ] = config('geonames.url') . 'alternatenames/' . strtoupper( $countryCode ) . '.zip';
+        foreach ($countryCodes as $i => $countryCode) {
+            $alternateNameDownloadLinks[$countryCode] = config('geonames.url') . 'alternatenames/' . strtoupper($countryCode) . '.zip';
         }
 
         return $alternateNameDownloadLinks;
@@ -133,8 +133,9 @@ class AlternateNameJob
      * @return string The absolute local path to the downloaded zip file.
      * @throws \Exception
      */
-    protected function getLocalAbsolutePathToAlternateNamesZipFile(): string {
-        return GeoSetting::getAbsoluteLocalStoragePath( ) . DIRECTORY_SEPARATOR . self::REMOTE_FILE_NAME_FOR_ALL;
+    protected function getLocalAbsolutePathToAlternateNamesZipFile(): string
+    {
+        return GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . self::REMOTE_FILE_NAME_FOR_ALL;
     }
 
     /**
@@ -143,11 +144,12 @@ class AlternateNameJob
      * @return string
      * @throws \Exception
      */
-    protected function getLocalAbsolutePathToAlternateNamesTextFile( string $countryCode = NULL ): string {
-        if ( '*' == $countryCode || is_null( $countryCode ) ):
-            return GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'alternateNames' . DIRECTORY_SEPARATOR .self::LOCAL_ALTERNATE_NAMES_FILE_NAME_FOR_ALL;
+    protected function getLocalAbsolutePathToAlternateNamesTextFile(string $countryCode = NULL): string
+    {
+        if ('*' == $countryCode || is_null($countryCode)):
+            return GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'alternateNames' . DIRECTORY_SEPARATOR . self::LOCAL_ALTERNATE_NAMES_FILE_NAME_FOR_ALL;
         endif;
-        return GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'alternateNames' . DIRECTORY_SEPARATOR . strtoupper( $countryCode ) . '.txt';
+        return GeoSetting::getAbsoluteLocalStoragePath() . DIRECTORY_SEPARATOR . 'alternateNames' . DIRECTORY_SEPARATOR . strtoupper($countryCode) . '.txt';
     }
 
 
@@ -158,8 +160,8 @@ class AlternateNameJob
      * @return int
      * @throws \Exception
      */
-    protected function insertAlternateNames( $localFilePath ) {
-
+    protected function insertAlternateNames($localFilePath)
+    {
 
 
         $file = fopen($localFilePath, 'r');
@@ -176,14 +178,14 @@ class AlternateNameJob
              * isHistoric        : '1', if this alternate name is historic and was used in the past. Example 'Bombay' for 'Mumbai'.
              */
 
-            $alternateNameId = $row[ 0 ];
-            $geonameid       = $row[ 1 ];
-            $isolanguage     = empty( $row[ 2 ] ) ? '' : $row[ 2 ];
-            $alternate_name  = empty( $row[ 3 ] ) ? '' : $row[ 3 ];
-            $isPreferredName = empty( $row[ 4 ] ) ? FALSE : $row[ 4 ];
-            $isShortName     = empty( $row[ 5 ] ) ? FALSE : $row[ 5 ];
-            $isColloquial    = empty( $row[ 6 ] ) ? FALSE : $row[ 6 ];
-            $isHistoric      = empty( $row[ 7 ] ) ? FALSE : $row[ 7 ];
+            $alternateNameId = $row[0];
+            $geonameid = $row[1];
+            $isolanguage = empty($row[2]) ? '' : $row[2];
+            $alternate_name = empty($row[3]) ? '' : $row[3];
+            $isPreferredName = empty($row[4]) ? FALSE : $row[4];
+            $isShortName = empty($row[5]) ? FALSE : $row[5];
+            $isColloquial = empty($row[6]) ? FALSE : $row[6];
+            $isHistoric = empty($row[7]) ? FALSE : $row[7];
 
             $pdo = DB::connection(GEONAMES_CONNECTION)->getPdo();
             $stmt = $pdo->prepare(
@@ -212,7 +214,7 @@ class AlternateNameJob
             $stmt->execute(
                 [
                     ':alternateNameId' => (int)$alternateNameId,
-                    ':geonameid' =>  (int)$geonameid,
+                    ':geonameid' => (int)$geonameid,
                     ':isolanguage' => (string)$isolanguage,
                     ':alternate_name' => (string)$alternate_name,
                     ':isPreferredName' => (bool)$isPreferredName,
@@ -222,7 +224,7 @@ class AlternateNameJob
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                    ':update_geonameid' =>  (int)$geonameid,
+                    ':update_geonameid' => (int)$geonameid,
                     ':update_isolanguage' => (string)$isolanguage,
                     ':update_alternate_name' => (string)$alternate_name,
                     ':update_isPreferredName' => (bool)$isPreferredName,

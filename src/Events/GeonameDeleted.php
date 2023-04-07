@@ -9,7 +9,8 @@ use MichaelDrennen\Geonames\Models\GeonamesDelete;
  * Class GeonameDeleted
  * @package MichaelDrennen\Geonames\Events
  */
-class GeonameDeleted {
+class GeonameDeleted
+{
     use SerializesModels;
 
     public $geonameDelete;
@@ -19,7 +20,8 @@ class GeonameDeleted {
      * GeonameDeleted constructor.
      * @param GeonamesDelete $geonameDelete
      */
-    public function __construct( GeonamesDelete $geonameDelete ) {
+    public function __construct(GeonamesDelete $geonameDelete)
+    {
         $this->geonameDelete = $geonameDelete;
     }
 }

@@ -5,13 +5,14 @@ namespace MichaelDrennen\Geonames\Models;
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Model;
 
-class AlternateName extends Model {
+class AlternateName extends Model
+{
 
     use Filterable;
 
     protected $appends = ['alternate_name_after_check'];
 
-    protected $table      = 'geonames_alternate_names';
+    protected $table = 'geonames_alternate_names';
     protected $primaryKey = 'alternateNameId';
     protected $connection = GEONAMES_CONNECTION;
 
@@ -22,13 +23,13 @@ class AlternateName extends Model {
      */
     protected $casts = [
         'alternateNameId' => 'integer',
-        'geonameid'       => 'integer',
-        'isolanguage'     => 'string',
-        'alternate_name'  => 'string',
+        'geonameid' => 'integer',
+        'isolanguage' => 'string',
+        'alternate_name' => 'string',
         'isPreferredName' => 'boolean',
-        'isShortName'     => 'boolean',
-        'isColloquial'    => 'boolean',
-        'isHistoric'      => 'boolean',
+        'isShortName' => 'boolean',
+        'isColloquial' => 'boolean',
+        'isHistoric' => 'boolean',
     ];
 
     /**
@@ -53,13 +54,14 @@ class AlternateName extends Model {
     }
 
 
-    public function geoname() {
+    public function geoname()
+    {
         return $this->belongsTo(Geoname::class, 'geonameid', 'geonameid');
     }
 
     public function getAlternateNameAfterCheckAttribute()
     {
-        if($this->alternate_name_edited && !empty($this->alternate_name_edited)){
+        if ($this->alternate_name_edited && !empty($this->alternate_name_edited)) {
             return $this->alternate_name_edited;
         }
         return $this->alternate_name;

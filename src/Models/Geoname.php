@@ -12,7 +12,8 @@ use EloquentFilter\Filterable;
 use Jeidison\CompositeKey\CompositeKey;
 
 
-class Geoname extends Model {
+class Geoname extends Model
+{
 
     use Filterable;
     use CompositeKey;
@@ -61,9 +62,9 @@ class Geoname extends Model {
      * @var array
      */
     protected $casts = ['population' => 'integer',
-                        'dem'        => 'integer',
-                        'latitude'   => 'double',
-                        'longitude'  => 'double',];
+        'dem' => 'integer',
+        'latitude' => 'double',
+        'longitude' => 'double',];
 
     /**
      * The event map for the model.
@@ -82,13 +83,13 @@ class Geoname extends Model {
     protected $countryCodesThatUseAdmin2Codes = ['US'];
 
 
-
     /**
      * @param string $countryCode
      * @return bool
      */
-    protected function thisCountryUsesAdmin2Codes ( string $countryCode ): bool {
-        if ( in_array( $countryCode, $this->countryCodesThatUseAdmin2Codes ) ) {
+    protected function thisCountryUsesAdmin2Codes(string $countryCode): bool
+    {
+        if (in_array($countryCode, $this->countryCodesThatUseAdmin2Codes)) {
             return true;
         }
 
@@ -106,12 +107,14 @@ class Geoname extends Model {
     }
 
 
-    public function alternateNames(){
+    public function alternateNames()
+    {
         return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid');
     }
 
-    public function alternateName($lang = null){
-        if($lang == null){
+    public function alternateName($lang = null)
+    {
+        if ($lang == null) {
             $lang = sc_tecdoc_lang();
         }
         return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('isolanguage', $lang);
