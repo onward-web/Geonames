@@ -98,7 +98,7 @@ class AlternateNameJob
 
         do {
             // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
-            $geonamesAlternateNameIds = AlternateName::select('alternateNameId')->where('updated_at', '<', $dataBeforeStart)->limit(1000)->get()->pluck('alternateNameId')->toArray();
+            $geonamesAlternateNameIds = AlternateName::select('alternateNameId')->where('updated_at', '<', $dataBeforeStart)->where('isCustom', 0)->limit(1000)->get()->pluck('alternateNameId')->toArray();
             AlternateName::whereIn('alternateNameId', $geonamesAlternateNameIds)->delete();
 
         } while (count($geonamesAlternateNameIds) > 0);
@@ -197,7 +197,8 @@ class AlternateNameJob
                                     `isPreferredName` = :isPreferredName,
                                     `isShortName` = :isShortName,
                                     `isColloquial` = :isColloquial,
-                                    `isHistoric` = :isHistoric,   
+                                    `isHistoric` = :isHistoric, 
+                                    `isCustom` = :isCustom,
                                     `created_at` = :created_at,
                                     `updated_at` = :updated_at
                                 ON DUPLICATE KEY UPDATE                                    
@@ -208,12 +209,13 @@ class AlternateNameJob
                                     `isShortName` = :update_isShortName,
                                     `isColloquial` = :update_isColloquial,
                                     `isHistoric` = :update_isHistoric,   
+                                    `isCustom` = :update_isCustom,
                                     `updated_at` = :update_updated_at
                                 '
             );
             $stmt->execute(
                 [
-                    ':alternateNameId' => (int)$alternateNameId,
+                    ':alternateNameId' => (string)$alternateNameId,
                     ':geonameid' => (int)$geonameid,
                     ':isolanguage' => (string)$isolanguage,
                     ':alternate_name' => (string)$alternate_name,
@@ -221,6 +223,7 @@ class AlternateNameJob
                     ':isShortName' => (bool)$isShortName,
                     ':isColloquial' => (bool)$isColloquial,
                     ':isHistoric' => (bool)$isHistoric,
+                    ':isCustom' => 0,
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
@@ -231,6 +234,7 @@ class AlternateNameJob
                     ':update_isShortName' => (bool)$isShortName,
                     ':update_isColloquial' => (bool)$isColloquial,
                     ':update_isHistoric' => (bool)$isHistoric,
+                    ':update_isCustom' => 0,
                     ':update_updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s')
                 ]
             );

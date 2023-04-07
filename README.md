@@ -1,9 +1,15 @@
 # geonames v7.x
 
 
+
 [![Latest Stable Version](https://poser.pugx.org/michaeldrennen/geonames/version)](https://packagist.org/packages/michaeldrennen/geonames)  [![Total Downloads](https://poser.pugx.org/michaeldrennen/geonames/downloads)](https://packagist.org/packages/michaeldrennen/geonames)  [![License](https://poser.pugx.org/michaeldrennen/geonames/license)](https://packagist.org/packages/michaeldrennen/geonames) [![GitHub issues](https://img.shields.io/github/issues/michaeldrennen/Geonames)](https://github.com/michaeldrennen/Geonames/issues) [![GitHub forks](https://img.shields.io/github/forks/michaeldrennen/Geonames)](https://github.com/michaeldrennen/Geonames/network) [![GitHub stars](https://img.shields.io/github/stars/michaeldrennen/Geonames)](https://github.com/michaeldrennen/Geonames/stargazers) ![Travis (.org)](https://img.shields.io/travis/michaeldrennen/Geonames)
 
 A Laravel (php) package to interface with the geo-location services at geonames.org.
+
+Alteration, cleaned the code from the garbage. Starting tasks has been changed to work through Queue.
+Install and update with one command.
+Does not use temporary work tables.
+Uses pure pdo to speed things up and deal with problem lines. Using Elogument, as it was in the official package, for single imports with large volumes is productive.
 
 ## Major Version Jump
 I jumped several major versions to catch up with Larvel's major version number. Makes things a little clearer.
@@ -69,7 +75,7 @@ I like to keep my servers running on GMT. Keeps things consistent.
 
 Assuming your servers are running on GMT, your update command would look like:
 ```php
-$schedule->command('geonames:update')->dailyAt('3:00');
+$schedule->job(new InstallJob)->dailyAt('3:00')->withoutOverlapping();
 ```
 
 The update artisan command will handle the updates and deletes to the geonames table.

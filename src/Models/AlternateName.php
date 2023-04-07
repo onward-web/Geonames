@@ -4,17 +4,23 @@ namespace MichaelDrennen\Geonames\Models;
 
 use EloquentFilter\Filterable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class AlternateName extends Model
 {
 
-    use Filterable;
+    use Filterable, HasUuids;
 
     protected $appends = ['alternate_name_after_check'];
 
     protected $table = 'geonames_alternate_names';
     protected $primaryKey = 'alternateNameId';
+
     protected $connection = GEONAMES_CONNECTION;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     /**
      * The attributes that should be cast to native types.

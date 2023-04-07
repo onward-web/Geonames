@@ -23,7 +23,7 @@ class CreateGeonamesAlternateNamesTable extends Migration
             /**
              * alternateNameId   : the id of this alternate name, int
              */
-            $table->integer('alternateNameId', FALSE, TRUE);
+            $table->string('alternateNameId', 50);
             $table->integer('geonameid', FALSE, TRUE);
 
             /**
@@ -68,6 +68,9 @@ class CreateGeonamesAlternateNamesTable extends Migration
              * isHistoric: '1', if this alternate name is historic and was used in the past
              */
             $table->tinyInteger('isHistoric', FALSE, TRUE)
+                ->nullable();
+
+            $table->tinyInteger('isCustom', FALSE, TRUE)
                 ->nullable();
 
             /**
