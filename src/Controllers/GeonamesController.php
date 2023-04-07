@@ -102,8 +102,7 @@ class GeonamesController extends GeneralController
     {
         $lang = $request->input('lang', sc_tecdoc_lang());
 
-        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
-            ->select(DB::raw('geonames.*'))
+        $obj = Geoname::select(DB::raw('geonames.*'))
             ->with(['alternateName'])
             ->join('geonames_alternate_names', function($join) use($lang)
             {
@@ -128,8 +127,7 @@ class GeonamesController extends GeneralController
     {
         $lang = $request->input('lang', sc_tecdoc_lang());
 
-        $obj = Geoname::on( env( 'DB_GEONAMES_CONNECTION' ) )
-            ->select(DB::raw('geonames.*'))
+        $obj = Geoname::select(DB::raw('geonames.*'))
             ->with(['alternateName'])
             ->join('geonames_alternate_names', function($join) use($lang)
             {
