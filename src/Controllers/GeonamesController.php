@@ -115,6 +115,7 @@ class GeonamesController extends GeneralController
                 $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
             })
             ->where('is_enable', 1)
+            ->where('isEnable', 1)
             ->filter($request->all())
             ->distinct()
             ->orderBy('geonames_alternate_names.alternate_name', 'asc')
@@ -140,6 +141,7 @@ class GeonamesController extends GeneralController
                 $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
             })
             ->where('is_enable', 1)
+            ->where('isEnable', 1)
             ->filter($request->all())
             ->distinct()
             ->orderBy('geonames_alternate_names.alternate_name', 'asc')
