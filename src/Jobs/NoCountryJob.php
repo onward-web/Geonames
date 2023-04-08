@@ -155,7 +155,7 @@ class NoCountryJob
             );
             $stmt->execute(
                 [
-                    ':geonameid' => $row[0],
+                    ':geonameid' => (string)$row[0],
                     ':name' => $row[1],
                     ':asciiname' => $row[2],
                     ':alternatenames' => $row[3],
@@ -177,7 +177,7 @@ class NoCountryJob
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                    ':update_geonameid' => $row[0],
+                    ':update_geonameid' => (string)$row[0],
                     ':update_name' => $row[1],
                     ':update_asciiname' => $row[2],
                     ':update_alternatenames' => $row[3],

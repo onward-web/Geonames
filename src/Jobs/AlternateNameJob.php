@@ -217,7 +217,7 @@ class AlternateNameJob
             $stmt->execute(
                 [
                     ':alternateNameId' => (string)$alternateNameId,
-                    ':geonameid' => (int)$geonameid,
+                    ':geonameid' => (string)$geonameid,
                     ':isolanguage' => (string)$isolanguage,
                     ':alternate_name' => (string)$alternate_name,
                     ':isPreferredName' => (bool)$isPreferredName,
@@ -229,7 +229,7 @@ class AlternateNameJob
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                    ':update_geonameid' => (int)$geonameid,
+                    ':update_geonameid' => (string)$geonameid,
                     ':update_isolanguage' => (string)$isolanguage,
                     ':update_alternate_name' => (string)$alternate_name,
                     ':update_isPreferredName' => (bool)$isPreferredName,

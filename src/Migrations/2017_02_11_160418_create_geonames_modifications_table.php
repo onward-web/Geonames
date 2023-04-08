@@ -17,7 +17,7 @@ class CreateGeonamesModificationsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');                   // Primary key of this table. Can't be geonameid, as a location can have n modifications.
             $table->date('date');                       // The date of the modification
-            $table->integer('geonameid');               // geonameid         : integer id of record in geonames database
+            $table->string('geonameid');               // geonameid         : integer id of record in geonames database
             $table->string('name', 200);                // name              : name of geographical point (utf8) varchar(200)
             $table->string('asciiname', 200);           // asciiname         : name of geographical point in plain ascii characters, varchar(200)
             $table->string('alternatenames', 10000);    // alternatenames    : alternatenames, comma separated, ascii names automatically transliterated, convenience attribute from alternatename table, varchar(10000)

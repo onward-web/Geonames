@@ -131,7 +131,7 @@ class Admin2CodeJob
             );
             $stmt->execute(
                 [
-                    ':geonameid' => $geonameId,
+                    ':geonameid' => (string)$geonameId,
                     ':country_code' => $countryCode,
                     ':admin1_code' => $admin1Code,
                     ':admin2_code' => $admin2Code,

@@ -87,7 +87,7 @@ class AlternateName extends Model
      * @param $isHistoric
      * @return void
      */
-    public static function addCustomAlternateNameRecord(int $geonameid, string $isolanguage, string $alternate_name, bool $isPreferredName, bool $isShortName, $isColloquial, $isHistoric, $isEnable = 1 ){
+    public static function addCustomAlternateNameRecord(string $geonameid, string $isolanguage, string $alternate_name, bool $isPreferredName, bool $isShortName, $isColloquial, $isHistoric, $isEnable = 1 ){
 
         $tmpItem = new self();
         $table = $tmpItem->getTable();

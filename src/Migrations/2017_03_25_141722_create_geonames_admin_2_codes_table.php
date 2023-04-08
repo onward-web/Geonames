@@ -22,7 +22,7 @@ class CreateGeonamesAdmin2CodesTable extends Migration
         // Format : concatenated codes <tab>name <tab> asciiname <tab> geonameId
         Schema::create(self::TABLE, function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer('geonameid', FALSE, TRUE)->primary();                // 5581553
+            $table->string('geonameid', 50)->primary();                // 5581553
             $table->char('country_code', 2)->nullable();              // US
             $table->string('admin1_code', 20)->nullable();            // CO
             $table->string('admin2_code', 80)->nullable();            // 107

@@ -24,7 +24,7 @@ class CreateGeonamesAlternateNamesTable extends Migration
              * alternateNameId   : the id of this alternate name, int
              */
             $table->string('alternateNameId', 50);
-            $table->integer('geonameid', FALSE, TRUE);
+            $table->string('geonameid', 50);
 
             /**
              * isolanguage: iso 639 language code 2- or 3-characters; 4-characters 'post' for postal codes and

@@ -22,7 +22,7 @@ class CreateGeonamesAdmin1CodesTable extends Migration
         // country_code and admin1_code
         Schema::create(self::TABLE, function (Blueprint $table) {
             $table->engine = 'InnoDB';
-            $table->integer('geonameid', FALSE, TRUE)->primary();         // 5417618
+            $table->string('geonameid', 50)->primary();         // 5417618 or 
             $table->char('country_code', 2);      // US
             $table->string('admin1_code', 20);    // CO
             $table->string('name', 255);          // Colorado

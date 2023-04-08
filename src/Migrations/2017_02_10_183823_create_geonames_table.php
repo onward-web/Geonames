@@ -16,7 +16,7 @@ class CreateGeonamesTable extends Migration
         Schema::create('geonames', function (Blueprint $table) {
             $table->engine = 'InnoDB';
 
-            $table->unsignedInteger('geonameid');               // geonameid         : integer id of record in geonames database
+            $table->string('geonameid', 50);               // geonameid         : integer id of record in geonames database
             $table->string('name', 200)->nullable();                // name              : name of geographical point (utf8) varchar(200)
             $table->string('asciiname', 200)->nullable();           // asciiname         : name of geographical point in plain ascii characters, varchar(200)
             $table->string('alternatenames', 10000)->nullable();    // alternatenames    : alternatenames, comma separated, ascii names automatically transliterated, convenience attribute from alternatename table, varchar(10000)
@@ -37,6 +37,7 @@ class CreateGeonamesTable extends Migration
             $table->string('timezone', 40)->nullable();             // timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
             $table->date('modification_date')->nullable();          // modification date : date of last modification in yyyy-MM-dd format
             $table->tinyInteger('is_enable', false, true); // custom field enable/disable
+            $table->tinyInteger('is_custom', false, true);
             $table->timestamps();                       // Laravel's created_at and updated_at timestamp fields.
             $table->primary('geonameid');
 

@@ -163,6 +163,7 @@ class InsertGeonamesJob
                                     `dem` = :dem,
                                     `timezone` = :timezone,
                                     `modification_date` = :modification_date,
+                                    `is_custom` = :is_custom,
                                     `is_enable` = :is_enable,
                                     `created_at` = :created_at,
                                     `updated_at` = :updated_at
@@ -190,7 +191,7 @@ class InsertGeonamesJob
                 );
                 $stmt->execute(
                     [
-                        ':geonameid' => $row[0],
+                        ':geonameid' => (string)$row[0],
                         ':name' => $row[1],
                         ':asciiname' => $row[2],
                         ':alternatenames' => $row[3],
@@ -209,11 +210,12 @@ class InsertGeonamesJob
                         ':dem' => $row[16],
                         ':timezone' => $row[17],
                         ':modification_date' => $row[18],
+                        ':is_custom' => 0,
                         ':is_enable' => 1,
                         ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                         ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 
-                        ':update_geonameid' => $row[0],
+                        ':update_geonameid' => (string)$row[0],
                         ':update_name' => $row[1],
                         ':update_asciiname' => $row[2],
                         ':update_alternatenames' => $row[3],
