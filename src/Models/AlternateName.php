@@ -87,7 +87,7 @@ class AlternateName extends Model
      * @param $isHistoric
      * @return void
      */
-    public function addCustomAlternateNameRecord(int $geonameid, string $isolanguage, string $alternate_name, bool $isPreferredName, bool $isShortName, $isColloquial, $isHistoric ){
+    public static function addCustomAlternateNameRecord(int $geonameid, string $isolanguage, string $alternate_name, bool $isPreferredName, bool $isShortName, $isColloquial, $isHistoric, $isEnable = 1 ){
 
         $tmpItem = new self();
         $table = $tmpItem->getTable();
@@ -120,6 +120,7 @@ class AlternateName extends Model
                 ':isColloquial' => (bool)$isColloquial,
                 ':isHistoric' => (bool)$isHistoric,
                 ':isCustom' => 1,
+                ':isEnable' => $isEnable,
                 ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                 ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s')
             ]

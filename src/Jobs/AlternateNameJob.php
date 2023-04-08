@@ -199,6 +199,7 @@ class AlternateNameJob
                                     `isColloquial` = :isColloquial,
                                     `isHistoric` = :isHistoric, 
                                     `isCustom` = :isCustom,
+                                    `isEnable` = :isEnable,
                                     `created_at` = :created_at,
                                     `updated_at` = :updated_at
                                 ON DUPLICATE KEY UPDATE                                    
@@ -224,6 +225,7 @@ class AlternateNameJob
                     ':isColloquial' => (bool)$isColloquial,
                     ':isHistoric' => (bool)$isHistoric,
                     ':isCustom' => 0,
+                    ':isEnable' => 1,
                     ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                     ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 

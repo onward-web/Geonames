@@ -163,6 +163,7 @@ class InsertGeonamesJob
                                     `dem` = :dem,
                                     `timezone` = :timezone,
                                     `modification_date` = :modification_date,
+                                    `is_enable` = :is_enable,
                                     `created_at` = :created_at,
                                     `updated_at` = :updated_at
                                 ON DUPLICATE KEY UPDATE
@@ -208,6 +209,7 @@ class InsertGeonamesJob
                         ':dem' => $row[16],
                         ':timezone' => $row[17],
                         ':modification_date' => $row[18],
+                        ':is_enable' => 1,
                         ':created_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
                         ':updated_at' => (string)Carbon::now()->format('Y-m-d H:i:s'),
 

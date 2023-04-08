@@ -72,6 +72,9 @@ class CreateGeonamesAlternateNamesTable extends Migration
 
             $table->tinyInteger('isCustom', FALSE, TRUE)
                 ->nullable();
+            $table->tinyInteger('isEnable', FALSE, TRUE)
+                ->nullable();
+
 
             /**
              * Laravel's created_at and updated_at timestamp fields.
@@ -83,6 +86,7 @@ class CreateGeonamesAlternateNamesTable extends Migration
             $table->index('alternate_name_edited');
             $table->fullText('alternate_name');
             $table->fullText('alternate_name_edited');
+            $table->index('isEnable');
             $table->index('updated_at');
             /**
              * I have to use the following code in place to add an index for MySQL databases.

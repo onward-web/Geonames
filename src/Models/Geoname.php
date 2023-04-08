@@ -109,7 +109,7 @@ class Geoname extends Model
 
     public function alternateNames()
     {
-        return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid');
+        return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid')->where('isEnable', 1);
     }
 
     public function alternateName($lang = null)

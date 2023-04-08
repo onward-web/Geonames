@@ -36,6 +36,7 @@ class CreateGeonamesTable extends Migration
                 ->nullable();                     // dem               : digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30'' (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.
             $table->string('timezone', 40)->nullable();             // timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
             $table->date('modification_date')->nullable();          // modification date : date of last modification in yyyy-MM-dd format
+            $table->tinyInteger('is_enable', false, true); // custom field enable/disable
             $table->timestamps();                       // Laravel's created_at and updated_at timestamp fields.
             $table->primary('geonameid');
 
@@ -47,6 +48,7 @@ class CreateGeonamesTable extends Migration
             $table->index(['country_code',
                 'admin1_code',
                 'admin2_code']);
+            $table->index('is_enable');
             $table->index('updated_at');
 
         });
