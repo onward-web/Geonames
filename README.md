@@ -9,7 +9,7 @@ A Laravel (php) package to interface with the geo-location services at geonames.
 Alteration, cleaned the code from the garbage. Starting tasks has been changed to work through Queue.
 Install and update with one command.
 Does not use temporary work tables.
-Uses pure pdo to speed things up and deal with problem lines. Using Elogument, as it was in the official package, for single imports with large volumes is productive.
+Uses pure pdo to speed things up and deal with problem lines. Using Elogument, as it was in the official package, for single imports with large volumes is no productive.
 
 ## Major Version Jump
 I jumped several major versions to catch up with Larvel's major version number. Makes things a little clearer.
