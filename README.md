@@ -27,6 +27,8 @@ You need to publish the config file for this package. This will add the file `co
 $ php artisan vendor:publish --provider="MichaelDrennen\Geonames\GeonamesServiceProvider" --tag=config
 
 ```
+Install:
+```
 composer require michaeldrennen/geonames
 ```
 And then add `geonames` provider to `providers` array in `app.php` config file:
