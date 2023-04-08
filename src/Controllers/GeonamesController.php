@@ -118,7 +118,42 @@ class GeonamesController extends GeneralController
             ->where('isEnable', 1)
             ->filter($request->all())
             ->distinct()
-            ->orderBy('geonames_alternate_names.alternate_name', 'asc')
+            ->orderByRaw('
+                IFNULL(
+                `alternate_name_edited`,
+                `alternate_name`
+                ) ASC'
+            )
+            ->paginateFilter();
+        return response()->json($obj);
+    }
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function citiesByRegion(Request $request){
+
+        $lang = $request->input('lang', sc_tecdoc_lang());
+
+        $obj = Geoname::selectRaw('
+                    MAX(`geonames`.`geonameid`) as geonameid,  
+                    IF(alternate_name_edited IS NULL or `alternate_name_edited` = "", `alternate_name`, `alternate_name_edited`) as alternate_name_checked ')
+            ->with(['alternateName'])
+            ->join('geonames_alternate_names', function ($join) use ($lang) {
+                $join->on('geonames.geonameid', '=', 'geonames_alternate_names.geonameid');
+                $join->where('geonames_alternate_names.isolanguage', '=', (string)$lang);
+            })
+            ->where('is_enable', 1)
+            ->where('isEnable', 1)
+            ->filter($request->all())
+            ->groupBy('alternate_name_checked')
+            ->orderByRaw('
+                IFNULL(
+                `alternate_name_edited`,
+                `alternate_name`
+                ) ASC'
+            )
             ->paginateFilter();
         return response()->json($obj);
     }
@@ -144,7 +179,12 @@ class GeonamesController extends GeneralController
             ->where('isEnable', 1)
             ->filter($request->all())
             ->distinct()
-            ->orderBy('geonames_alternate_names.alternate_name', 'asc')
+            ->orderByRaw('
+                IFNULL(
+                `alternate_name_edited`,
+                `alternate_name`
+                ) ASC'
+            )
             ->paginateFilter();
         return response()->json($obj);
     }

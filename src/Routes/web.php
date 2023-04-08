@@ -20,6 +20,7 @@ Route::get( '/geonames/{countryCode}/schools/{asciiNameTerm}', '\MichaelDrennen\
 */
 
 Route::get('/geonames', '\MichaelDrennen\Geonames\Controllers\GeonamesController@regionByCountry')->name('api.geonames.search');
+Route::get('/geonames_cities', '\MichaelDrennen\Geonames\Controllers\GeonamesController@citiesByRegion')->name('api.geonames.cities_by_region');
 
 
 /**
