@@ -26,13 +26,18 @@ class AlternateName extends Model
     protected $keyType = 'string';
 
     /**
+     * @var array An empty array, because I want all of the fields mass assignable.
+     */
+    protected $guarded = [];
+
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
     protected $casts = [
-        'alternateNameId' => 'integer',
-        'geonameid' => 'integer',
+        'alternateNameId' => 'string',
+        'geonameid' => 'string',
         'isolanguage' => 'string',
         'alternate_name' => 'string',
         'isPreferredName' => 'boolean',
@@ -41,21 +46,7 @@ class AlternateName extends Model
         'isHistoric' => 'boolean',
     ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'alternateNameId',
-        'geonameid',
-        'isolanguage',
-        'alternate_name',
-        'isPreferredName',
-        'isShortName',
-        'isColloquial',
-        'isHistoric',
-    ];
+
 
     public function modelFilter()
     {

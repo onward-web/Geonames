@@ -24,6 +24,11 @@ class Geoname extends Model
 
     protected $connection = GEONAMES_CONNECTION;
 
+    public $incrementing = false;
+
+    // original field alternateNameId  transform to string, custom use Uuid
+    protected $keyType = 'string';
+
 
     /**
      * @var array An empty array, because I want all of the fields mass assignable.
@@ -61,7 +66,8 @@ class Geoname extends Model
      *
      * @var array
      */
-    protected $casts = ['population' => 'integer',
+    protected $casts = [
+        'population' => 'integer',
         'dem' => 'integer',
         'latitude' => 'double',
         'longitude' => 'double',];
