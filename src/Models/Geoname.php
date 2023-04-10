@@ -115,7 +115,7 @@ class Geoname extends Model
 
     public function alternateNames()
     {
-        return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid')->where('isEnable', 1);
+        return $this->hasMany(AlternateName::class, 'geonameid', 'geonameid')->where('isEnable', 1)->orderByDesc('isCustom');
     }
 
     public function alternateName($lang = null)
@@ -123,7 +123,7 @@ class Geoname extends Model
         if ($lang == null) {
             $lang = sc_tecdoc_lang();
         }
-        return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('isolanguage', $lang);
+        return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('isolanguage', $lang)->orderByDesc('isCustom');
     }
 
 }
