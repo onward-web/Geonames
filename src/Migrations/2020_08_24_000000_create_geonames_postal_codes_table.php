@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 class CreateGeonamesPostalCodesTable extends Migration
 {
 
-    const TABLE = 'geonames_translate_texts';
+    const TABLE = 'geonames_postal_codes';
 
     /**
      * Run the migrations.
