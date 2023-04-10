@@ -59,7 +59,7 @@ class InsertGeonamesJob
 
             do {
                 // выбираем записи которые по дате обновления, более ранние чем запуск процесса обновления($dataStart)
-                $geonameIds = Geoname::select('geonameid')->where('updated_at', '<', $dataBeforeStart)->limit(1000)->get()->pluck('geonameid')->toArray();
+                $geonameIds = Geoname::select('geonameid')->where('updated_at', '<', $dataBeforeStart)->where('is_custom', 0)->limit(1000)->get()->pluck('geonameid')->toArray();
                 Geoname::whereIn('geonameid', $geonameIds)->delete();
 
             } while (count($geonameIds) > 0);
