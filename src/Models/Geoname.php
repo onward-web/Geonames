@@ -126,4 +126,8 @@ class Geoname extends Model
         return $this->hasOne(AlternateName::class, 'geonameid', 'geonameid')->where('isolanguage', $lang)->orderByDesc('isCustom');
     }
 
+    public function geoname(){
+        return $this->hasOne(Geoname::class, 'geonameid', 'geonameid');
+    }
+
 }
