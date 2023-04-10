@@ -7,7 +7,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use MichaelDrennen\Geonames\Models\AlternateName;
-use MichaelDrennen\Geonames\Models\GeonameTranslateText;
+use MichaelDrennen\Geonames\Models\GeonameTransformText;
 
 class UpdateGeonameByTranslateText
 {
@@ -15,7 +15,7 @@ class UpdateGeonameByTranslateText
 
     public function handle()
     {
-        GeonameTranslateText::chunkById(100, function ($translateTexts) {
+        GeonameTransformText::chunkById(100, function ($translateTexts) {
             foreach ($translateTexts as $translateText) {
 
                 AlternateName::where('alternate_name', $translateText->source_text)

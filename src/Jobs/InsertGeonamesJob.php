@@ -10,7 +10,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use MichaelDrennen\Geonames\Models\Geoname;
-use MichaelDrennen\Geonames\Models\GeonameTranslateText;
 use MichaelDrennen\Geonames\Models\GeoSetting;
 use MichaelDrennen\Geonames\Models\Log;
 use MichaelDrennen\Geonames\Traits\GeonamesJobTrait;

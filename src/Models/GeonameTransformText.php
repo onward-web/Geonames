@@ -12,13 +12,13 @@ use EloquentFilter\Filterable;
 use Jeidison\CompositeKey\CompositeKey;
 
 
-class GeonameTranslateText extends Model
+class GeonameTransformText extends Model
 {
 
     use Filterable;
     use CompositeKey;
 
-    protected $table = 'geonames_translate_texts';
+    protected $table = 'geonames_transform_texts';
 
     protected $primaryKey = 'id';
 
