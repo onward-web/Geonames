@@ -96,6 +96,7 @@ class AlternateName extends Model
                                     `isColloquial` = :isColloquial,
                                     `isHistoric` = :isHistoric, 
                                     `isCustom` = :isCustom,
+                                    `isEnable` = :isEnable,
                                     `created_at` = :created_at,
                                     `updated_at` = :updated_at
                                 '
