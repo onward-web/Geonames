@@ -19,7 +19,7 @@ class GeonamesController extends GeneralController
     {
         $lang = $request->input('lang', sc_tecdoc_lang());
 
-        $obj = Geoname::select(DB::raw('geonames.geonameid'))
+        $obj = Geoname::select(DB::raw('distinct geonames.geonameid'))
             ->with(['alternateName', 'geoname'])
             ->join('geonames_alternate_names', function ($join) use ($lang) {
                 $join->on('geonames.geonameid', '=', 'geonames_alternate_names.geonameid');
@@ -28,7 +28,6 @@ class GeonamesController extends GeneralController
             ->where('is_enable', 1)
             ->where('isEnable', 1)
             ->filter($request->all())
-            ->distinct()
             ->orderByRaw('
                 IFNULL(
                 `alternate_name_edited`,
