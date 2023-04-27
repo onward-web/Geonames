@@ -17,6 +17,10 @@ class UpdateGeonameByTranslateText
     {
         GeonameTransformText::chunkById(100, function ($translateTexts) {
             foreach ($translateTexts as $translateText) {
+                // ignore empty
+                if(!$translateText->target_text){
+                    continue;
+                }
 
                 AlternateName::where('alternate_name', $translateText->source_text)
                     ->where('isolanguage', $translateText->source_lang)

@@ -6,7 +6,6 @@ use App\Http\Controllers\GeneralController;
 use Illuminate\Http\Request;
 use Locale;
 use MichaelDrennen\Geonames\Models\Geoname;
-use MichaelDrennen\Geonames\Repositories\GeonameRepository;
 use DB;
 
 class GeonamesController extends GeneralController
@@ -19,7 +18,7 @@ class GeonamesController extends GeneralController
     {
         $lang = $request->input('lang', sc_tecdoc_lang());
 
-        $obj = Geoname::select(DB::raw('distinct geonames.geonameid'))
+        $obj = Geoname::select(DB::raw('distinct geonames.geonameid as geonameid'))
             ->with(['alternateName', 'geoname'])
             ->join('geonames_alternate_names', function ($join) use ($lang) {
                 $join->on('geonames.geonameid', '=', 'geonames_alternate_names.geonameid');
