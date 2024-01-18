@@ -16,7 +16,9 @@ class GeonamesController extends GeneralController
      */
     public function search(Request $request)
     {
-        $lang = $request->input('lang', sc_tecdoc_lang());
+        $lang = $request->input('lang', sc_get_locale());
+
+        app()->setLocale($lang);
 
         $obj = Geoname::select(DB::raw('distinct geonames.geonameid as geonameid'))
             ->with(['alternateName', 'geoname'])
