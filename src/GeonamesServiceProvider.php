@@ -15,6 +15,9 @@ class GeonamesServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
+        if(!defined('GEONAMES_MIDDLEWARE')){
+            define('GEONAMES_MIDDLEWARE', config('geonames.middleware', []));
+        }
 
         // There are a number of tables that need to be created for our Geonames package.
         // Feel free to create your own additional migrations to create indexes that are appropriate for your application.
@@ -27,6 +30,7 @@ class GeonamesServiceProvider extends \Illuminate\Support\ServiceProvider
         $this->publishes([
             __DIR__ . '/Migrations/' => database_path('migrations'),
         ], 'migrations');
+
     }
 
 

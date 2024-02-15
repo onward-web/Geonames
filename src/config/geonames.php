@@ -6,5 +6,6 @@ return [
     'allCountriesTxtFileName' => 'allCountries.txt',
     'noCountriesZipFileName' => 'no-country.zip',
     'noCountriesTextFileName' => 'no-country.txt',
+    'middleware' => ['web'],
 
 ];

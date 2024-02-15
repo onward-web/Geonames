@@ -18,8 +18,6 @@ class GeonamesController extends GeneralController
     {
         $lang = $request->input('lang', sc_get_locale());
 
-        app()->setLocale($lang);
-
         $obj = Geoname::select(DB::raw('distinct geonames.geonameid as geonameid'))
             ->with(['alternateName', 'geoname'])
             ->join('geonames_alternate_names', function ($join) use ($lang) {
